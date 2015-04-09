@@ -2,3 +2,5 @@ bin
 .DS_Store
 org.gpr4j.test/.settings/org.eclipse.jdt.apt.core.prefs
 .class
+junit
+acats_result.txt
