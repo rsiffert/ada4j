@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build" name="org.ada4j.test">
+    <property environment="env"/>
+    <property name="org.ada4j.location" value="../org.ada4j"/>
+    <property name="junit.output.dir" value="junit"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.7"/>
+    <property name="source" value="1.7"/>
+    
+	<path id="org.ada4j.classpath">
+        <pathelement location="${org.ada4j.location}/bin"/>
+        <pathelement location="${org.ada4j.location}/lib/antlr-4.5-complete.jar"/>
+    </path>
+    
+	<path id="org.ada4j.test.classpath">
+        <pathelement location="bin"/>
+        <pathelement location="${org.ada4j.location}/lib/antlr-4.5-complete.jar"/>
+        <pathelement location="lib/hamcrest-core-1.3.jar"/>
+        <pathelement location="lib/junit-4.12.jar"/>
+        <path refid="org.ada4j.classpath"/>
+    </path>
+    
+	<target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    
+	<target name="clean">
+        <delete dir="bin"/>
+    </target>
+    
+	<target depends="clean" name="cleanall">
+        <ant antfile="build.xml" dir="${org.ada4j.location}" inheritAll="false" target="clean"/>
+    </target>
+    
+	<target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects">
+        <ant antfile="build.xml" dir="${org.ada4j.location}" inheritAll="false" target="build-project"/>
+    </target>
+
+	<target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="org.ada4j.test.classpath"/>
+        </javac>
+    </target>
+
+    <target name="test">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="org.ada4j.intenal.grammar.test.Ada2005GrammarTest" todir="${junit.output.dir}"/>
+            <classpath refid="org.ada4j.test.classpath"/>
+        </junit>
+    </target>
+	
+    <target name="junitreport">
+        <junitreport todir="${junit.output.dir}">
+            <fileset dir="${junit.output.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${junit.output.dir}"/>
+        </junitreport>
+    </target>
+	
+</project>

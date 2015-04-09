@@ -3,6 +3,7 @@
 	<name>org.ada4j.test</name>
 	<comment></comment>
 	<projects>
+		<project>org.ada4j</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

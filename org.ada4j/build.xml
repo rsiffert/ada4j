@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build" name="org.ada4j">
+	<property environment="env"/>
+    <property name="org.ada4j.test.location" value="../org.ada4j.test"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.7"/>
+    <property name="source" value="1.7"/>
+    
+	<path id="org.ada4j.classpath">
+        <pathelement location="bin"/>
+        <pathelement location="lib/antlr-4.5-complete.jar"/>
+    </path>
+    
+	<target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    
+	<target name="clean">
+        <delete dir="bin"/>
+    </target>
+    
+	<target depends="clean" name="cleanall"/>
+    
+	<target depends="build-subprojects,build-project" name="build"/>
+    
+	<target name="build-subprojects"/>
+    
+	<target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="org.ada4j.classpath"/>
+        </javac>
+    </target>
+    
+	<target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects">
+        <ant antfile="build.xml" dir="${org.ada4j.test.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${org.ada4j.test.location}" inheritAll="false" target="build"/>
+    </target>
+	
+</project>
