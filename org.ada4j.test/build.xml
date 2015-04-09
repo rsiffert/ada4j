@@ -4,8 +4,8 @@
     <property name="org.ada4j.location" value="../org.ada4j"/>
     <property name="junit.output.dir" value="junit"/>
     <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.8"/>
-    <property name="source" value="1.8"/>
+    <property name="target" value="1.7"/>
+    <property name="source" value="1.7"/>
 	<property name="build.compiler" value="javac1.7"/>
     
 	<path id="org.ada4j.classpath">
@@ -53,7 +53,7 @@
 
     <target depends="build" name="test">
         <mkdir dir="${junit.output.dir}"/>
-        <junit fork="yes" printsummary="withOutAndErr">
+        <junit fork="yes" printsummary="withOutAndErr" haltonfailure="yes">
             <formatter type="xml"/>
             <test name="org.ada4j.intenal.grammar.test.Ada2005GrammarTest" todir="${junit.output.dir}"/>
             <classpath refid="org.ada4j.test.classpath"/>
