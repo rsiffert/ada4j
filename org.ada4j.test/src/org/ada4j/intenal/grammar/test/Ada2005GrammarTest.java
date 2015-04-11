@@ -138,7 +138,7 @@ public class Ada2005GrammarTest {
 					result.split("\\n").length);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			e.printStackTrace(System.out);
 		}
 	}
 }
