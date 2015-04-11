@@ -89,8 +89,7 @@ public class Ada2005GrammarTest {
 
 		File acatsDir = new File("res\\ACATS31");
 
-		Parsing_Thread[] threadPool = new Parsing_Thread[new Integer(
-				System.getenv("NUMBER_OF_PROCESSORS"))];
+		Parsing_Thread[] threadPool = new Parsing_Thread[Runtime.getRuntime().availableProcessors()];
 
 		List<File> testFiles = new ArrayList<File>();
 		List<File> threadSafeTestFiles;
