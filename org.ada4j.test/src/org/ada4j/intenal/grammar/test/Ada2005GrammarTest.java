@@ -85,53 +85,61 @@ public class Ada2005GrammarTest {
 	@Test
 	public void Acats31Test() {
 
-		final String RESULT_FILENAME = "acats_result.txt";
+		try {
 
-		File acatsDir = new File("res\\ACATS31");
+			final String RESULT_FILENAME = "acats_result.txt";
 
-		Parsing_Thread[] threadPool = new Parsing_Thread[Runtime.getRuntime().availableProcessors()];
+			File acatsDir = new File("res", "ACATS31");
 
-		List<File> testFiles = new ArrayList<File>();
-		List<File> threadSafeTestFiles;
+			Parsing_Thread[] threadPool = new Parsing_Thread[Runtime
+					.getRuntime().availableProcessors()];
 
-		StringBuilder resultBuilder = new StringBuilder();
+			List<File> testFiles = new ArrayList<File>();
+			List<File> threadSafeTestFiles;
 
-		File[] acastSubDirs = acatsDir.listFiles();
-		for (File acastSubDir : acastSubDirs) {
+			StringBuilder resultBuilder = new StringBuilder();
 
-			File[] testFilesForCurrentDir = gatherAdaFilesOfDirectory(acastSubDir);
+			File[] acastSubDirs = acatsDir.listFiles();
+			for (File acastSubDir : acastSubDirs) {
 
-			for (File testFile : testFilesForCurrentDir) {
-				testFiles.add(testFile);
+				File[] testFilesForCurrentDir = gatherAdaFilesOfDirectory(acastSubDir);
+
+				for (File testFile : testFilesForCurrentDir) {
+					testFiles.add(testFile);
+				}
 			}
-		}
 
-		int nbTestFiles = testFiles.size();
+			int nbTestFiles = testFiles.size();
 
-		threadSafeTestFiles = Collections.synchronizedList(testFiles);
+			threadSafeTestFiles = Collections.synchronizedList(testFiles);
 
-		for (int threadId = 0; threadId < threadPool.length; threadId++) {
-			threadPool[threadId] = new Parsing_Thread(threadSafeTestFiles);
-			threadPool[threadId].start();
-		}
-
-		for (Parsing_Thread thread : threadPool) {
-			try {
-				thread.join();
-				resultBuilder.append(thread.getResult());
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			for (int threadId = 0; threadId < threadPool.length; threadId++) {
+				threadPool[threadId] = new Parsing_Thread(threadSafeTestFiles);
+				threadPool[threadId].start();
 			}
+
+			for (Parsing_Thread thread : threadPool) {
+				try {
+					thread.join();
+					resultBuilder.append(thread.getResult());
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
+			String result = resultBuilder.toString();
+
+			dumpResultToFile(result, RESULT_FILENAME);
+
+			assertEquals("No parsing error has occurred", -1,
+					result.indexOf("KO"));
+
+			assertEquals("All files have been parsed", nbTestFiles,
+					result.split("\\n").length);
+
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-
-		String result = resultBuilder.toString();
-
-		dumpResultToFile(result, RESULT_FILENAME);
-
-		assertEquals("No parsing error has occurred", -1, result.indexOf("KO"));
-
-		assertEquals("All files have been parsed", nbTestFiles,
-				result.split("\\n").length);
 	}
 }
 
