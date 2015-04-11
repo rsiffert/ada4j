@@ -129,7 +129,7 @@ public class Ada2005GrammarTest {
 
 			String result = resultBuilder.toString();
 
-			dumpResultToFile(result, RESULT_FILENAME);
+			//dumpResultToFile(result, RESULT_FILENAME);
 
 			assertEquals("No parsing error has occurred", -1,
 					result.indexOf("KO"));

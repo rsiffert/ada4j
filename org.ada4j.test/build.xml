@@ -2,7 +2,6 @@
 <project basedir="." default="build" name="org.ada4j.test">
     <property environment="env"/>
     <property name="org.ada4j.location" value="../org.ada4j"/>
-    <property name="junit.output.dir" value="junit"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.7"/>
     <property name="source" value="1.7"/>
@@ -52,10 +51,9 @@
     </target>
 
     <target depends="build" name="test">
-        <mkdir dir="${junit.output.dir}"/>
         <junit fork="yes" printsummary="withOutAndErr" haltonfailure="yes">
-            <formatter type="xml"/>
-            <test name="org.ada4j.intenal.grammar.test.Ada2005GrammarTest" todir="${junit.output.dir}"/>
+            <formatter type="xml" usefile="false"/>
+            <test name="org.ada4j.intenal.grammar.test.Ada2005GrammarTest"/>
             <classpath refid="org.ada4j.test.classpath"/>
         </junit>
     </target>
