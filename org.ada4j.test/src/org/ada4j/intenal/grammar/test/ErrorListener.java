@@ -24,4 +24,8 @@ public class ErrorListener extends BaseErrorListener {
 		return this.testOk;
 	}
 
+	public void reset() {
+		this.testOk = true;
+	}
+
 }
