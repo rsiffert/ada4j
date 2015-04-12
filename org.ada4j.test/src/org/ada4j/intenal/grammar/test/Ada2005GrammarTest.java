@@ -9,8 +9,14 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.ada4j.internal.grammar.Ada2005Lexer;
 import org.ada4j.internal.grammar.Ada2005Parser;
@@ -87,12 +93,7 @@ public class Ada2005GrammarTest {
 
 		File acatsDir = new File("res", "ACATS31");
 
-		Parsing_Thread[] threadPool = new Parsing_Thread[Runtime.getRuntime()
-				.availableProcessors()];
-
 		List<File> testFiles = new ArrayList<File>();
-		List<File> threadSafeTestFiles;
-
 		StringBuilder resultBuilder = new StringBuilder();
 
 		File[] acastSubDirs = acatsDir.listFiles();
@@ -107,70 +108,74 @@ public class Ada2005GrammarTest {
 
 		boolean parsingOk = true;
 
-		threadSafeTestFiles = Collections.synchronizedList(testFiles);
+		ExecutorService pool = Executors.newFixedThreadPool(Runtime
+				.getRuntime().availableProcessors());
+		Set<Future<ParsingResult>> globalResult = new HashSet<Future<ParsingResult>>();
 
-		for (int threadId = 0; threadId < threadPool.length; threadId++) {
-			threadPool[threadId] = new Parsing_Thread(threadSafeTestFiles);
-			threadPool[threadId].start();
+		for (File testFile : testFiles) {
+			Future<ParsingResult> fileResult = pool
+					.submit(new Parser(testFile));
+			globalResult.add(fileResult);
 		}
 
-		for (Parsing_Thread thread : threadPool) {
+		for (Future<ParsingResult> fileResult : globalResult) {
 			try {
-				thread.join();
-				parsingOk = parsingOk && thread.isParsingOk();
-				resultBuilder.append(thread.getParsingResult());
+				if (!fileResult.get().isParsingOk()) {
+					parsingOk = false;
+					resultBuilder
+							.append(fileResult.get().getNameOfParsedFile());
+				}
 			} catch (InterruptedException e) {
+				parsingOk = false;
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				parsingOk = false;
 				e.printStackTrace();
 			}
 		}
 
 		if (!parsingOk) {
-			String result = resultBuilder.toString();
-			dumpResultToFile(result, RESULT_FILENAME);
+			dumpResultToFile(resultBuilder.toString(), RESULT_FILENAME);
 		}
 
 		assertTrue("No parsing error has occurred", parsingOk);
 	}
 }
 
-class Parsing_Thread extends Thread {
+class ParsingResult {
+	boolean parsingOk;
+	String nameOfParsedFile;
 
-	private List<File> filesToProcess;
-	private StringBuilder resultBuilder;
-	private boolean parsingIsOk;
+	public ParsingResult(boolean parsingOk, String nameOfParsedFile) {
+		this.parsingOk = parsingOk;
+		this.nameOfParsedFile = nameOfParsedFile;
+	}
 
-	public Parsing_Thread(List<File> filesToProcess) {
-		super();
-		this.parsingIsOk = true;
-		this.resultBuilder = new StringBuilder();
-		this.filesToProcess = filesToProcess;
+	public boolean isParsingOk() {
+		return parsingOk;
+	}
+
+	public String getNameOfParsedFile() {
+		return nameOfParsedFile;
+	}
+}
+
+class Parser implements Callable<ParsingResult> {
+
+	private File fileToProcess;
+
+	public Parser(File fileToProcess) {
+		this.fileToProcess = fileToProcess;
 	}
 
 	/**
 	 * Runs parsing on all files to process.
 	 */
 	@Override
-	public void run() {
-		while (!this.filesToProcess.isEmpty()) {
-			File file = this.filesToProcess.remove(0);
+	public ParsingResult call() {
+		boolean parsingOk = parseFile(this.fileToProcess);
 
-			boolean parsingOk = parseFile(file);
-
-			if (!parsingOk) {
-				this.parsingIsOk = false;
-				this.resultBuilder.append(file.getName() + "\n");
-			}
-		}
-	}
-
-	/**
-	 * Return the result of parsing for processed files.
-	 * 
-	 * @return true if and only if parsing completed successfully for all
-	 *         processed files.
-	 */
-	public boolean isParsingOk() {
-		return this.parsingIsOk;
+		return new ParsingResult(parsingOk, this.fileToProcess.getName());
 	}
 
 	/**
@@ -222,15 +227,5 @@ class Parsing_Thread extends Thread {
 		}
 
 		return errorListener.isTestOk();
-	}
-
-	/**
-	 * Return the parsing result.
-	 * 
-	 * @return a String containing the names of files for which a parsing error
-	 *         occurred.
-	 */
-	public String getParsingResult() {
-		return this.resultBuilder.toString();
 	}
 }
