@@ -1,4 +1,4 @@
-package org.ada4j.intenal.grammar.test;
+package org.ada4j.internal.grammar.test;
 
 import static org.junit.Assert.assertTrue;
 

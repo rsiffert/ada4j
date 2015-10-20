@@ -3,9 +3,9 @@
     <property environment="env"/>
     <property name="org.ada4j.location" value="../org.ada4j"/>
     <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.7"/>
-    <property name="source" value="1.7"/>
-	<property name="build.compiler" value="javac1.7"/>
+    <property name="target" value="1.8"/>
+    <property name="source" value="1.8"/>
+	<property name="build.compiler" value="javac1.8"/>
     
 	<path id="org.ada4j.classpath">
         <pathelement location="${org.ada4j.location}/bin"/>
@@ -51,9 +51,10 @@
     </target>
 
     <target depends="build" name="test">
-        <junit fork="yes" printsummary="withOutAndErr" haltonfailure="yes" showoutput="yes">
+        <junit fork="yes" printsummary="withOutAndErr" haltonfailure="yes" showoutput="yes" dir="${basedir}">
             <formatter type="xml" usefile="false"/>
-            <test name="org.ada4j.intenal.grammar.test.Ada2005GrammarTest"/>
+            <test name="org.ada4j.internal.grammar.test.Ada2005GrammarTest"/>
+        	<test name="org.ada4j.api.test.FactoryTest"/>
             <classpath refid="org.ada4j.test.classpath"/>
         </junit>
     </target>
