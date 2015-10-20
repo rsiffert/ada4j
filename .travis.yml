@@ -2,3 +2,5 @@ language: java
 before_script: cd org.ada4j.test
 notifications:
   email: false
+jdk:
+  - oraclejdk8
