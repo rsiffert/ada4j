@@ -16,8 +16,8 @@ protected boolean previousTokenIs(int tokenType) {
 }
 
 numeric_literal
-:
-    DECIMAL_LITERAL
+: 
+    DECIMAL_LITERAL 
     | BASED_LITERAL
 ;
 
@@ -1283,10 +1283,19 @@ null_procedure_declaration
      procedure_specification IS NULL SEMI_COLON
 ;
 
-package_declaration
-:
+package_declaration   
+: 
     package_specification SEMI_COLON
 ;
+
+private_part:
+
+        PRIVATE
+        (
+            basic_declarative_item
+        )*;
+    
+
 
 package_specification
 :
@@ -1294,12 +1303,7 @@ package_specification
     (
         basic_declarative_item
     )*
-    (
-        PRIVATE
-        (
-            basic_declarative_item
-        )*
-    )? END
+    private_part? END
     (
         (
             parent_unit_name DOT

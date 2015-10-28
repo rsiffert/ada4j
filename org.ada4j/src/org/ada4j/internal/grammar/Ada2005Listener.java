@@ -1,4 +1,4 @@
-// Generated from D:\Users\RS\workspace_ada\Ada_2005\src\Ada2005.g4 by ANTLR 4.1
+// Generated from D:\Users\RS\workspace_ada\ada4j\org.ada4j\src\org\ada4j\internal\grammar\Ada2005.g4 by ANTLR 4.1
 package org.ada4j.internal.grammar;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
@@ -766,6 +766,17 @@ public interface Ada2005Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitProper_body(@NotNull Ada2005Parser.Proper_bodyContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link Ada2005Parser#private_part}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrivate_part(@NotNull Ada2005Parser.Private_partContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Ada2005Parser#private_part}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrivate_part(@NotNull Ada2005Parser.Private_partContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link Ada2005Parser#task_body_stub}.

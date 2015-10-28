@@ -14,7 +14,7 @@ package Example is
         
         package Deeply_Nested is
         
-            procedure Deep_Inside;
+            procedure Deep_Inside is abstract;
         
         end Deeply_Nested;
         

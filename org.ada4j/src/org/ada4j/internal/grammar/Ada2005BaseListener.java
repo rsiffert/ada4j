@@ -1,4 +1,4 @@
-// Generated from D:\Users\RS\workspace_ada\Ada_2005\src\Ada2005.g4 by ANTLR 4.1
+// Generated from D:\Users\RS\workspace_ada\ada4j\org.ada4j\src\org\ada4j\internal\grammar\Ada2005.g4 by ANTLR 4.1
 package org.ada4j.internal.grammar;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -908,6 +908,19 @@ public class Ada2005BaseListener implements Ada2005Listener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitProper_body(@NotNull Ada2005Parser.Proper_bodyContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterPrivate_part(@NotNull Ada2005Parser.Private_partContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitPrivate_part(@NotNull Ada2005Parser.Private_partContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
