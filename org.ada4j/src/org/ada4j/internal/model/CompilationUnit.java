@@ -11,8 +11,9 @@ public class CompilationUnit implements ICompilationUnit {
 	private List<IDeclaration> declarations;
 	private String name;
 
-	public CompilationUnit() {
+	public CompilationUnit(String name) {
 		this.declarations = new ArrayList<IDeclaration>();
+		this.name = name;
 	}
 
 	@Override
@@ -23,10 +24,6 @@ public class CompilationUnit implements ICompilationUnit {
 	@Override
 	public String getName() {
 		return this.name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public void addDeclaration(IDeclaration declaration) {

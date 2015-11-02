@@ -22,17 +22,21 @@ public class Parser {
 	public static ICompilationUnit ParseAdaSourceFile(Path path)
 			throws RecognitionException {
 		Ada2005Lexer lexer;
-		CompilationUnit compilationUnit = new CompilationUnit();
+		String filenameWithExtension = path.getFileName().toString();
+		CompilationUnit compilationUnit = new CompilationUnit(
+				filenameWithExtension.substring(0,
+						filenameWithExtension.indexOf(".")));
 		try {
 			Reader reader = new FileReader(path.toFile());
 			BufferedReader bufferedReader = new BufferedReader(reader);
 			ANTLRInputStream input = new ANTLRInputStream(bufferedReader);
 			lexer = new Ada2005Lexer(input);
-			Ada2005Parser parser = new Ada2005Parser(new CommonTokenStream(
-					lexer));
+			Ada2005Parser parser = new Ada2005Parser(
+					new CommonTokenStream(lexer));
 			ParseTree parseTree = parser.compilation();
 			ParseTreeWalker treeWalker = new ParseTreeWalker();
-			treeWalker.walk(new Ada2005FileListener(compilationUnit), parseTree);
+			treeWalker.walk(new Ada2005FileListener(compilationUnit),
+					parseTree);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

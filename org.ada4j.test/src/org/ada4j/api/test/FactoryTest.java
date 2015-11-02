@@ -20,13 +20,15 @@ import org.junit.Test;
 
 public class FactoryTest {
 
-	private ICompilationUnit sut;
+	private ICompilationUnit exampleSut;
+	private ICompilationUnit mainSut;
 
 	class ClassHierarchyMembershipPredicate implements Predicate<IDeclaration> {
 
 		private Class<? extends Object> parent;
 
-		public ClassHierarchyMembershipPredicate(Class<? extends Object> parent) {
+		public ClassHierarchyMembershipPredicate(
+				Class<? extends Object> parent) {
 			this.parent = parent;
 		}
 
@@ -37,12 +39,13 @@ public class FactoryTest {
 	}
 
 	private List<IDeclaration> getCompilationUnitDeclarationsOfType(
-			Class<? extends Object> declaration) {
+			Class<? extends Object> declaration,
+			ICompilationUnit compilationUnit) {
 		ArrayList<IDeclaration> matchingDeclarations = new ArrayList<IDeclaration>(
-				this.sut.getDeclarations());
+				compilationUnit.getDeclarations());
 
-		matchingDeclarations.removeIf(new ClassHierarchyMembershipPredicate(
-				declaration));
+		matchingDeclarations
+				.removeIf(new ClassHierarchyMembershipPredicate(declaration));
 
 		return matchingDeclarations;
 	}
@@ -52,8 +55,8 @@ public class FactoryTest {
 		ArrayList<IDeclaration> matchingDeclarations = new ArrayList<IDeclaration>(
 				parentPackage.getPublicDeclarations());
 
-		matchingDeclarations.removeIf(new ClassHierarchyMembershipPredicate(
-				declaration));
+		matchingDeclarations
+				.removeIf(new ClassHierarchyMembershipPredicate(declaration));
 
 		return matchingDeclarations;
 	}
@@ -63,23 +66,26 @@ public class FactoryTest {
 		ArrayList<IDeclaration> matchingDeclarations = new ArrayList<IDeclaration>(
 				parentPackage.getPrivateDeclarations());
 
-		matchingDeclarations.removeIf(new ClassHierarchyMembershipPredicate(
-				declaration));
+		matchingDeclarations
+				.removeIf(new ClassHierarchyMembershipPredicate(declaration));
 
 		return matchingDeclarations;
 	}
 
 	@Before
-	public void createSut() {
-		this.sut = Factory.Create_Compilation_Unit(new File("res",
-				"example.ads").toPath());
+	public void createSuts() {
+		this.exampleSut = Factory.Create_Compilation_Unit(
+				new File("res", "example.ads").toPath());
+		this.mainSut = Factory
+				.Create_Compilation_Unit(new File("res", "main.ads").toPath());
 	}
 
 	@Test
 	public void testPackages() {
 
 		List<IDeclaration> packageDeclarations = this
-				.getCompilationUnitDeclarationsOfType(Package.class);
+				.getCompilationUnitDeclarationsOfType(Package.class,
+						this.exampleSut);
 
 		assertEquals(3, packageDeclarations.size());
 
@@ -112,12 +118,14 @@ public class FactoryTest {
 	@Test
 	public void testSubprograms() {
 		List<IDeclaration> packageDeclarations = this
-				.getCompilationUnitDeclarationsOfType(Package.class);
+				.getCompilationUnitDeclarationsOfType(Package.class,
+						this.exampleSut);
 
 		// Example package
 		List<IDeclaration> subprogramDeclarations = this
 				.getPackagePublicDeclarationsOfType(
-						(IPackage) packageDeclarations.get(0), Subprogram.class);
+						(IPackage) packageDeclarations.get(0),
+						Subprogram.class);
 
 		assertEquals(2, subprogramDeclarations.size());
 		this.checkSubprogram((ISubprogram) subprogramDeclarations.get(0),
@@ -147,5 +155,21 @@ public class FactoryTest {
 		this.checkSubprogram((ISubprogram) subprogramDeclarations.get(0),
 				"Deep_Inside", ISubprogram.PROCEDURE, true);
 
+	}
+
+	@Test
+	public void testProcedureOutsidePackage() {
+		List<IDeclaration> subprogramDecls = this
+				.getCompilationUnitDeclarationsOfType(Subprogram.class,
+						this.mainSut);
+		assertEquals(1, subprogramDecls.size());
+		this.checkSubprogram((ISubprogram) subprogramDecls.get(0), "Main",
+				ISubprogram.PROCEDURE, false);
+	}
+
+	@Test
+	public void testCompilationUnits() {
+		assertEquals("main", this.mainSut.getName());
+		assertEquals("example", this.exampleSut.getName());
 	}
 }

@@ -3,6 +3,7 @@ package org.ada4j.internal.grammar;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import org.ada4j.api.model.IDeclaration;
 import org.ada4j.api.model.ISubprogram;
 import org.ada4j.internal.model.CompilationUnit;
 import org.ada4j.internal.model.Package;
@@ -46,14 +47,21 @@ public class Ada2005FileListener extends Ada2005BaseListener {
 				ctx.defining_program_unit_name().getText(),
 				ISubprogram.PROCEDURE,
 				ctx.getParent().getParent() != null
-						&& ctx.getParent()
-								.getParent()
-								.getClass()
-								.equals(Ada2005Parser.Abstract_subprogram_declarationContext.class));
+						&& ctx.getParent().getParent().getClass().equals(
+								Ada2005Parser.Abstract_subprogram_declarationContext.class));
 		if (this.isInPrivatePart) {
+			assert (this.packages.peek() != null);
 			this.packages.peek().addPrivateDeclaration(procedure);
 		} else {
-			this.packages.peek().addPublicDeclaration(procedure);
+			this.addDeclarationToCurrentScope(procedure);
+		}
+	}
+
+	private void addDeclarationToCurrentScope(IDeclaration declaration) {
+		if (this.packages.peek() != null) {
+			this.packages.peek().addPublicDeclaration(declaration);
+		} else {
+			this.compilationUnit.addDeclaration(declaration);
 		}
 	}
 
@@ -61,31 +69,27 @@ public class Ada2005FileListener extends Ada2005BaseListener {
 	public void enterFunction_specification(
 			@NotNull Ada2005Parser.Function_specificationContext ctx) {
 		Subprogram function = new Subprogram(
-				ctx.defining_designator().getText(),
-				ISubprogram.FUNCTION,
+				ctx.defining_designator().getText(), ISubprogram.FUNCTION,
 				ctx.getParent().getParent() != null
-						&& ctx.getParent()
-								.getParent()
-								.getClass()
-								.equals(Ada2005Parser.Abstract_subprogram_declarationContext.class));
+						&& ctx.getParent().getParent().getClass().equals(
+								Ada2005Parser.Abstract_subprogram_declarationContext.class));
 
 		if (this.isInPrivatePart) {
 			this.packages.peek().addPrivateDeclaration(function);
-		}
-
-		else {
-			this.packages.peek().addPublicDeclaration(function);
+		} else {
+			this.addDeclarationToCurrentScope(function);
 		}
 	}
 
 	@Override
-	public void enterPrivate_part(@NotNull Ada2005Parser.Private_partContext ctx) {
+	public void enterPrivate_part(
+			@NotNull Ada2005Parser.Private_partContext ctx) {
 		this.isInPrivatePart = true;
 	}
 
 	@Override
-	public void exitPrivate_part(@NotNull Ada2005Parser.Private_partContext ctx) {
+	public void exitPrivate_part(
+			@NotNull Ada2005Parser.Private_partContext ctx) {
 		this.isInPrivatePart = false;
 	}
-
 }
