@@ -3,7 +3,6 @@ package org.ada4j.internal.grammar;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-import org.ada4j.api.model.IPackage;
 import org.ada4j.api.model.ISubprogram;
 import org.ada4j.internal.model.CompilationUnit;
 import org.ada4j.internal.model.Package;
@@ -28,15 +27,24 @@ public class Ada2005FileListener extends Ada2005BaseListener {
 				.defining_program_unit_name().getText());
 
 		this.addPackageToCurrentScope(declaredPkg);
-		if (this.packages.size() > 0) {
-			declaredPkg.setParent(this.packages.getFirst());
-		}
-		this.packages.push(declaredPkg);
+	}
+
+	@Override
+	public void enterPackage_body(Ada2005Parser.Package_bodyContext ctx) {
+		Package declaredPkg = new Package(
+				ctx.defining_program_unit_name().getText());
+
+		this.addPackageToCurrentScope(declaredPkg);
 	}
 
 	@Override
 	public void exitPackage_declaration(
 			@NotNull Ada2005Parser.Package_declarationContext ctx) {
+		this.packages.pop();
+	}
+
+	@Override
+	public void exitPackage_body(Ada2005Parser.Package_bodyContext ctx) {
 		this.packages.pop();
 	}
 
@@ -62,12 +70,14 @@ public class Ada2005FileListener extends Ada2005BaseListener {
 		}
 	}
 
-	private void addPackageToCurrentScope(IPackage newPackage) {
+	private void addPackageToCurrentScope(Package newPackage) {
 		if (this.packages.peek() != null) {
 			this.packages.peek().addPackage(newPackage);
+			newPackage.setParent(this.packages.getFirst());
 		} else {
 			this.compilationUnit.addPackage(newPackage);
 		}
+		this.packages.push(newPackage);
 	}
 
 	@Override

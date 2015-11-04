@@ -15,36 +15,46 @@ import org.junit.Test;
 
 public class FactoryTest {
 
-	private ICompilationUnit exampleSut;
+	private ICompilationUnit exampleSpec;
+	private ICompilationUnit exampleBody;
 	private ICompilationUnit mainSut;
 
 	@Before
 	public void createSuts() {
-		this.exampleSut = Factory.Create_Compilation_Unit(
+		this.exampleSpec = Factory.Create_Compilation_Unit(
 				new File("res", "example.ads").toPath());
+		this.exampleBody = Factory.Create_Compilation_Unit(
+				new File("res", "example.adb").toPath());
 		this.mainSut = Factory
 				.Create_Compilation_Unit(new File("res", "main.ads").toPath());
 	}
 
-	@Test
-	public void testPackages() {
-
-		List<IPackage> packageDeclarations = this.exampleSut.getPackages();
+	private void testPackagesFor(ICompilationUnit example) {
+		List<IPackage> packageDeclarations = example.getPackages();
 
 		assertEquals(1, packageDeclarations.size());
 		this.checkPackage((IPackage) packageDeclarations.get(0), "Example",
 				null);
-		
+
 		packageDeclarations = packageDeclarations.get(0).getPackages();
 		assertEquals(1, packageDeclarations.size());
 		this.checkPackage((IPackage) packageDeclarations.get(0), "Inner_Pkg",
 				"Example");
-		
-		
+
 		packageDeclarations = packageDeclarations.get(0).getPackages();
 		assertEquals(1, packageDeclarations.size());
 		this.checkPackage((IPackage) packageDeclarations.get(0),
 				"Deeply_Nested", "Inner_Pkg");
+	}
+
+	@Test
+	public void testPackagesDeclarations() {
+		this.testPackagesFor(this.exampleSpec);
+	}
+
+	@Test
+	public void testPackagesBodies() {
+		this.testPackagesFor(this.exampleBody);
 	}
 
 	private void checkPackage(IPackage packageToTest, String name,
@@ -67,36 +77,68 @@ public class FactoryTest {
 	}
 
 	@Test
-	public void testSubprograms() {
-		List<IPackage> packageDeclarations = this.exampleSut.getPackages();
+	public void testSubprogramsDeclarations() {
+		 List<IPackage> packageDeclarations = this.exampleSpec.getPackages();
+		
+		 // Example package
+		 List<ISubprogram> subprogramDeclarations = packageDeclarations.get(0)
+		 .getSubprograms();
+		
+		 assertEquals(3, subprogramDeclarations.size());
+		 this.checkSubprogram((ISubprogram) subprogramDeclarations.get(0),
+		 "Procedure1", ISubprogram.PROCEDURE, false, false);
+		 this.checkSubprogram((ISubprogram) subprogramDeclarations.get(1),
+		 "Function2", ISubprogram.FUNCTION, false, false);
+		 this.checkSubprogram((ISubprogram) subprogramDeclarations.get(2),
+		 "Private_Func", ISubprogram.FUNCTION, false, true);
+		
+		 // Inner_Pkg package
+		 packageDeclarations = packageDeclarations.get(0).getPackages();
+		 subprogramDeclarations = packageDeclarations.get(0).getSubprograms();
+		 assertEquals(2, subprogramDeclarations.size());
+		 this.checkSubprogram((ISubprogram) subprogramDeclarations.get(0),
+		 "Procedure2", ISubprogram.PROCEDURE, false, false);
+		 this.checkSubprogram((ISubprogram) subprogramDeclarations.get(1),
+		 "Function1", ISubprogram.FUNCTION, false, false);
+		
+		 // Deeply_Nested package
+		 packageDeclarations = packageDeclarations.get(0).getPackages();
+		 subprogramDeclarations = packageDeclarations.get(0).getSubprograms();
+		 assertEquals(1, subprogramDeclarations.size());
+		 this.checkSubprogram((ISubprogram) subprogramDeclarations.get(0),
+		 "Deep_Inside", ISubprogram.PROCEDURE, true, false);
 
-		// Example package
-		List<ISubprogram> subprogramDeclarations = packageDeclarations.get(0).getSubprograms();
+	}
 
-		assertEquals(3, subprogramDeclarations.size());
-		this.checkSubprogram((ISubprogram) subprogramDeclarations.get(0),
-				"Procedure1", ISubprogram.PROCEDURE, false, false);
-		this.checkSubprogram((ISubprogram) subprogramDeclarations.get(1),
-				"Function2", ISubprogram.FUNCTION, false, false);
-		this.checkSubprogram((ISubprogram) subprogramDeclarations.get(2),
-				"Private_Func", ISubprogram.FUNCTION, false, true);
-
-		// Inner_Pkg package
-		packageDeclarations = packageDeclarations.get(0).getPackages();
-		subprogramDeclarations = packageDeclarations.get(0).getSubprograms();
-		assertEquals(2, subprogramDeclarations.size());
-		this.checkSubprogram((ISubprogram) subprogramDeclarations.get(0),
-				"Procedure2", ISubprogram.PROCEDURE, false, false);
-		this.checkSubprogram((ISubprogram) subprogramDeclarations.get(1),
-				"Function1", ISubprogram.FUNCTION, false, false);
-
-		// Deeply_Nested package
-		packageDeclarations = packageDeclarations.get(0).getPackages();
-		subprogramDeclarations = packageDeclarations.get(0).getSubprograms();
-		assertEquals(1, subprogramDeclarations.size());
-		this.checkSubprogram((ISubprogram) subprogramDeclarations.get(0),
-				"Deep_Inside", ISubprogram.PROCEDURE, true, false);
-
+	@Test
+	public void testSubprogramsBodies() {
+		 List<IPackage> packageDeclarations = this.exampleBody.getPackages();
+			
+		 // Example package
+		 List<ISubprogram> subprogramDeclarations = packageDeclarations.get(0)
+		 .getSubprograms();
+		
+		 assertEquals(3, subprogramDeclarations.size());
+		 this.checkSubprogram((ISubprogram) subprogramDeclarations.get(0),
+		 "Procedure1", ISubprogram.PROCEDURE, false, false);
+		 this.checkSubprogram((ISubprogram) subprogramDeclarations.get(1),
+		 "Function2", ISubprogram.FUNCTION, false, false);
+		 this.checkSubprogram((ISubprogram) subprogramDeclarations.get(2),
+		 "Private_Func", ISubprogram.FUNCTION, false, false);
+		
+		 // Inner_Pkg package
+		 packageDeclarations = packageDeclarations.get(0).getPackages();
+		 subprogramDeclarations = packageDeclarations.get(0).getSubprograms();
+		 assertEquals(2, subprogramDeclarations.size());
+		 this.checkSubprogram((ISubprogram) subprogramDeclarations.get(0),
+		 "Procedure2", ISubprogram.PROCEDURE, false, false);
+		 this.checkSubprogram((ISubprogram) subprogramDeclarations.get(1),
+		 "Function1", ISubprogram.FUNCTION, false, false);
+		
+		 // Deeply_Nested package
+		 packageDeclarations = packageDeclarations.get(0).getPackages();
+		 subprogramDeclarations = packageDeclarations.get(0).getSubprograms();
+		 assertEquals(0, subprogramDeclarations.size());
 	}
 
 	@Test
@@ -110,6 +152,6 @@ public class FactoryTest {
 	@Test
 	public void testCompilationUnits() {
 		assertEquals("main", this.mainSut.getName());
-		assertEquals("example", this.exampleSut.getName());
+		assertEquals("example", this.exampleSpec.getName());
 	}
 }
