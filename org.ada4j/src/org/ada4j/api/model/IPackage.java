@@ -2,8 +2,9 @@ package org.ada4j.api.model;
 
 import java.util.List;
 
-public interface IPackage {
+public interface IPackage extends INamedUnit {
 	
+	@Override
 	public String getName();
 	
 	public IPackage getParent();

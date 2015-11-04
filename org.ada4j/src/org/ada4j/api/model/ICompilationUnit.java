@@ -8,8 +8,9 @@ import java.util.List;
  * @author RS
  * 
  */
-public interface ICompilationUnit {
+public interface ICompilationUnit extends INamedUnit {
 	
+	@Override
 	public String getName();
 
 	public List<ISubprogram> getSubprograms();
