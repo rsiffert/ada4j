@@ -3,20 +3,20 @@ package org.ada4j.internal.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ada4j.api.model.IDeclaration;
 import org.ada4j.api.model.IPackage;
+import org.ada4j.api.model.ISubprogram;
 
 public class Package implements IPackage {
 
 	private String name;
 	private IPackage parent;
-	private List<IDeclaration> publicDeclarations;
-	private List<IDeclaration> privateDeclarations;
+	private List<IPackage> packages;
+	private List<ISubprogram> subprograms;
 
 	public Package(String name) {
 		this.name = name;
-		this.publicDeclarations = new ArrayList<IDeclaration>();
-		this.privateDeclarations = new ArrayList<IDeclaration>();
+		this.packages = new ArrayList<IPackage>();
+		this.subprograms = new ArrayList<ISubprogram>();
 	}
 
 	@Override
@@ -33,22 +33,21 @@ public class Package implements IPackage {
 		this.parent = parent;
 	}
 
-	public void addPublicDeclaration(IDeclaration declaration) {
-		this.publicDeclarations.add(declaration);
-	}
-
-	public void addPrivateDeclaration(IDeclaration declaration) {
-		this.privateDeclarations.add(declaration);
+	@Override
+	public List<IPackage> getPackages() {
+		return this.packages;
 	}
 
 	@Override
-	public List<IDeclaration> getPublicDeclarations() {
-		return this.publicDeclarations;
+	public List<ISubprogram> getSubprograms() {
+		return this.subprograms;
 	}
 
-	@Override
-	public List<IDeclaration> getPrivateDeclarations() {
-		return this.privateDeclarations;
+	public void addPackage(IPackage newPackage) {
+		this.packages.add(newPackage);
 	}
 
+	public void addSubprogram(ISubprogram subprogram) {
+		this.subprograms.add(subprogram);
+	}
 }

@@ -1,7 +1,9 @@
 package org.ada4j.api.model;
 
-public interface IType extends IDeclaration {
+public interface IType {
 	
 	public boolean isASubtype();
+	
+	public String getName();
 
 }

@@ -3,7 +3,7 @@ package org.ada4j.internal.grammar;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-import org.ada4j.api.model.IDeclaration;
+import org.ada4j.api.model.IPackage;
 import org.ada4j.api.model.ISubprogram;
 import org.ada4j.internal.model.CompilationUnit;
 import org.ada4j.internal.model.Package;
@@ -27,7 +27,7 @@ public class Ada2005FileListener extends Ada2005BaseListener {
 		Package declaredPkg = new Package(ctx.package_specification()
 				.defining_program_unit_name().getText());
 
-		this.compilationUnit.addDeclaration(declaredPkg);
+		this.addPackageToCurrentScope(declaredPkg);
 		if (this.packages.size() > 0) {
 			declaredPkg.setParent(this.packages.getFirst());
 		}
@@ -47,21 +47,26 @@ public class Ada2005FileListener extends Ada2005BaseListener {
 				ctx.defining_program_unit_name().getText(),
 				ISubprogram.PROCEDURE,
 				ctx.getParent().getParent() != null
-						&& ctx.getParent().getParent().getClass().equals(
-								Ada2005Parser.Abstract_subprogram_declarationContext.class));
-		if (this.isInPrivatePart) {
-			assert (this.packages.peek() != null);
-			this.packages.peek().addPrivateDeclaration(procedure);
+						&& ctx.getParent().getParent().getClass()
+								.equals(Ada2005Parser.Abstract_subprogram_declarationContext.class),
+				this.isInPrivatePart);
+
+		this.addSubProgramToCurrentScope(procedure);
+	}
+
+	private void addSubProgramToCurrentScope(ISubprogram subprogram) {
+		if (this.packages.peek() != null) {
+			this.packages.peek().addSubprogram(subprogram);
 		} else {
-			this.addDeclarationToCurrentScope(procedure);
+			this.compilationUnit.addSubprogram(subprogram);
 		}
 	}
 
-	private void addDeclarationToCurrentScope(IDeclaration declaration) {
+	private void addPackageToCurrentScope(IPackage newPackage) {
 		if (this.packages.peek() != null) {
-			this.packages.peek().addPublicDeclaration(declaration);
+			this.packages.peek().addPackage(newPackage);
 		} else {
-			this.compilationUnit.addDeclaration(declaration);
+			this.compilationUnit.addPackage(newPackage);
 		}
 	}
 
@@ -71,14 +76,12 @@ public class Ada2005FileListener extends Ada2005BaseListener {
 		Subprogram function = new Subprogram(
 				ctx.defining_designator().getText(), ISubprogram.FUNCTION,
 				ctx.getParent().getParent() != null
-						&& ctx.getParent().getParent().getClass().equals(
-								Ada2005Parser.Abstract_subprogram_declarationContext.class));
+						&& ctx.getParent().getParent().getClass()
+								.equals(Ada2005Parser.Abstract_subprogram_declarationContext.class),
+				this.isInPrivatePart);
 
-		if (this.isInPrivatePart) {
-			this.packages.peek().addPrivateDeclaration(function);
-		} else {
-			this.addDeclarationToCurrentScope(function);
-		}
+		this.addSubProgramToCurrentScope(function);
+
 	}
 
 	@Override

@@ -7,11 +7,14 @@ public class Subprogram implements ISubprogram {
 	private String name;
 	private int type;
 	private boolean isAbstract;
+	private boolean isPrivate;
 
-	public Subprogram(String name, int type, boolean isAbstract) {
+	public Subprogram(String name, int type, boolean isAbstract,
+			boolean isPrivate) {
 		this.type = type;
 		this.name = name;
 		this.isAbstract = isAbstract;
+		this.isPrivate = isPrivate;
 	}
 
 	@Override
@@ -27,6 +30,11 @@ public class Subprogram implements ISubprogram {
 	@Override
 	public boolean isAbstract() {
 		return this.isAbstract;
+	}
+
+	@Override
+	public boolean isPrivate() {
+		return this.isPrivate;
 	}
 
 }

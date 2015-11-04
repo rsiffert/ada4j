@@ -2,12 +2,13 @@ package org.ada4j.api.model;
 
 import java.util.List;
 
-public interface IPackage extends IDeclaration {
+public interface IPackage {
+	
+	public String getName();
 	
 	public IPackage getParent();
 	
-	public List<IDeclaration> getPublicDeclarations();
-	
-	public List<IDeclaration> getPrivateDeclarations();
+	public List<IPackage> getPackages();
 
+	public List<ISubprogram> getSubprograms();
 }

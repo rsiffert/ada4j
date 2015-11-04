@@ -12,6 +12,8 @@ public interface ICompilationUnit {
 	
 	public String getName();
 
-	public List<IDeclaration> getDeclarations();
+	public List<ISubprogram> getSubprograms();
+	
+	public List<IPackage> getPackages();
 
 }
