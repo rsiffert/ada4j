@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.nio.file.Path;
 
 import org.ada4j.api.model.ICompilationUnit;
@@ -21,27 +22,44 @@ public class Parser {
 
 	public static ICompilationUnit ParseAdaSourceFile(Path path)
 			throws RecognitionException {
-		Ada2005Lexer lexer;
 		String filenameWithExtension = path.getFileName().toString();
 		CompilationUnit compilationUnit = new CompilationUnit(
 				filenameWithExtension.substring(0,
 						filenameWithExtension.indexOf(".")));
 		try {
 			Reader reader = new FileReader(path.toFile());
-			BufferedReader bufferedReader = new BufferedReader(reader);
-			ANTLRInputStream input = new ANTLRInputStream(bufferedReader);
-			lexer = new Ada2005Lexer(input);
-			Ada2005Parser parser = new Ada2005Parser(
-					new CommonTokenStream(lexer));
-			ParseTree parseTree = parser.compilation();
-			ParseTreeWalker treeWalker = new ParseTreeWalker();
-			treeWalker.walk(new Ada2005FileListener(compilationUnit),
-					parseTree);
+			ParseAdaSourceFileFromReader(compilationUnit, reader);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		return compilationUnit;
+	}
+
+	public static ICompilationUnit ParseAdaSourceFile(
+			String adaSourceFileContents, String adaSourceFileName)
+					throws RecognitionException {
+		CompilationUnit compilationUnit = new CompilationUnit(
+				adaSourceFileName.substring(0, adaSourceFileName.indexOf(".")));
+		try {
+			Reader reader = new StringReader(adaSourceFileContents);
+			ParseAdaSourceFileFromReader(compilationUnit, reader);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return compilationUnit;
+	}
+
+	private static void ParseAdaSourceFileFromReader(
+			CompilationUnit compilationUnit, Reader reader) throws IOException {
+		BufferedReader bufferedReader = new BufferedReader(reader);
+		ANTLRInputStream input = new ANTLRInputStream(bufferedReader);
+		Ada2005Lexer lexer = new Ada2005Lexer(input);
+		Ada2005Parser parser = new Ada2005Parser(new CommonTokenStream(lexer));
+		ParseTree parseTree = parser.compilation();
+		ParseTreeWalker treeWalker = new ParseTreeWalker();
+		treeWalker.walk(new Ada2005FileListener(compilationUnit), parseTree);
 	}
 
 }
