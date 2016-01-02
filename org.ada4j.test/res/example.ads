@@ -18,7 +18,7 @@ package Example is
     
         procedure Procedure2(Toto : in T_Toto; Arg2 : out Boolean);
         
-        function Function1 return Boolean;
+        function Function1 return access function (Int : in Integer) return Boolean;
         
         package Deeply_Nested is
         
@@ -37,7 +37,7 @@ private
     
     type T_Other is new Integer;
     
-    function Private_Func return Integer;    
+    function Private_Func return not null access constant Integer;    
     
 
 end Example;

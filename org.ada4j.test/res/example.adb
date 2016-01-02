@@ -1,6 +1,6 @@
 package body Example is
 
-    procedure Procedure1
+    procedure Procedure1(Arg1 : in Integer)
     is
     begin
         null;
@@ -12,13 +12,13 @@ package body Example is
     
     package body Inner_Pkg is
     
-        procedure Procedure2
+        procedure Procedure2(Toto : in T_Toto; Arg2 : out Boolean)
         is
         begin
             null;
         end;
         
-        function Function1 return Boolean
+        function Function3 return access protected procedure
         is
         begin
             return False;
@@ -37,10 +37,10 @@ package body Example is
         return 2;
     end;
     
-    function Private_Func return Integer
+    function Private_Func return not null access constant Integer
     is
     begin
-        return 0;
+        return new Integer'(0);
     end;    
     
 

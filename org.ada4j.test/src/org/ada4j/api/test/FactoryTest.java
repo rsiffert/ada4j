@@ -27,23 +27,23 @@ public class FactoryTest {
 
 	@Before
 	public void createSuts() {
-		this.exampleSpec = Factory.Create_Compilation_Unit(
+		this.exampleSpec = Factory.CreateCompilationUnit(
 				new File("res", "example.ads").toPath());
-		this.exampleBody = Factory.Create_Compilation_Unit(
+		this.exampleBody = Factory.CreateCompilationUnit(
 				new File("res", "example.adb").toPath());
 		this.mainSut = Factory
-				.Create_Compilation_Unit(new File("res", "main.ads").toPath());
-		this.renamedPkg = Factory.Create_Compilation_Unit(
+				.CreateCompilationUnit(new File("res", "main.ads").toPath());
+		this.renamedPkg = Factory.CreateCompilationUnit(
 				new File("res", "renaming_pkg.ads").toPath());
-		this.genericInstPkg = Factory.Create_Compilation_Unit(
+		this.genericInstPkg = Factory.CreateCompilationUnit(
 				new File("res", "generic_inst_pkg.ads").toPath());
-		this.genericDecPkg = Factory.Create_Compilation_Unit(
+		this.genericDecPkg = Factory.CreateCompilationUnit(
 				new File("res", "generic_dec_pkg.ads").toPath());
-		this.renamedProc = Factory.Create_Compilation_Unit(
+		this.renamedProc = Factory.CreateCompilationUnit(
 				new File("res", "renaming_proc.ads").toPath());
-		this.genericInstProc = Factory.Create_Compilation_Unit(
+		this.genericInstProc = Factory.CreateCompilationUnit(
 				new File("res", "generic_inst_proc.ads").toPath());
-		this.genericDecProc = Factory.Create_Compilation_Unit(
+		this.genericDecProc = Factory.CreateCompilationUnit(
 				new File("res", "generic_dec_proc.ads").toPath());
 	}
 
@@ -115,11 +115,18 @@ public class FactoryTest {
 	}
 
 	private void checkSubprogram(ISubprogram subprogToTest, String name,
-			int type, boolean isAbstract, boolean isPrivate) {
+			int type, boolean isAbstract, boolean isPrivate,
+			String returnTypeName) {
 		assertEquals(name, subprogToTest.getName());
 		assertEquals(type, subprogToTest.getType());
 		assertEquals(isAbstract, subprogToTest.isAbstract());
 		assertEquals(isPrivate, subprogToTest.isPrivate());
+		if (returnTypeName != null) {
+			assertEquals(returnTypeName,
+					subprogToTest.getReturnType().getName());
+		} else {
+			assertNull(subprogToTest.getReturnType());
+		}
 	}
 
 	@Test
@@ -132,11 +139,11 @@ public class FactoryTest {
 
 		assertEquals(3, subprogramDeclarations.size());
 		this.checkSubprogram(subprogramDeclarations.get(0), "Procedure1",
-				ISubprogram.PROCEDURE, false, false);
+				ISubprogram.PROCEDURE, false, false, null);
 		this.checkSubprogram(subprogramDeclarations.get(1), "Function2",
-				ISubprogram.FUNCTION, false, false);
+				ISubprogram.FUNCTION, false, false, "Positive");
 		this.checkSubprogram(subprogramDeclarations.get(2), "Private_Func",
-				ISubprogram.FUNCTION, false, true);
+				ISubprogram.FUNCTION, false, true, "not null access constant Integer");
 
 		// Empty package
 		IPackage emptyPackage = rootPackage.getPackages().get(0);
@@ -153,16 +160,16 @@ public class FactoryTest {
 		subprogramDeclarations = innerPkgPackage.getSubprograms();
 		assertEquals(2, subprogramDeclarations.size());
 		this.checkSubprogram(subprogramDeclarations.get(0), "Procedure2",
-				ISubprogram.PROCEDURE, false, false);
+				ISubprogram.PROCEDURE, false, false, null);
 		this.checkSubprogram(subprogramDeclarations.get(1), "Function1",
-				ISubprogram.FUNCTION, false, false);
+				ISubprogram.FUNCTION, false, false, "access function Boolean");
 
 		// Deeply_Nested package
 		IPackage deeplyNestedPackage = innerPkgPackage.getPackages().get(0);
 		subprogramDeclarations = deeplyNestedPackage.getSubprograms();
 		assertEquals(1, subprogramDeclarations.size());
 		this.checkSubprogram(subprogramDeclarations.get(0), "Deep_Inside",
-				ISubprogram.PROCEDURE, true, false);
+				ISubprogram.PROCEDURE, true, false, null);
 
 	}
 
@@ -175,20 +182,20 @@ public class FactoryTest {
 
 		assertEquals(3, subprogramDeclarations.size());
 		this.checkSubprogram(subprogramDeclarations.get(0), "Procedure1",
-				ISubprogram.PROCEDURE, false, false);
+				ISubprogram.PROCEDURE, false, false, null);
 		this.checkSubprogram(subprogramDeclarations.get(1), "Function2",
-				ISubprogram.FUNCTION, false, false);
+				ISubprogram.FUNCTION, false, false, "Positive");
 		this.checkSubprogram(subprogramDeclarations.get(2), "Private_Func",
-				ISubprogram.FUNCTION, false, false);
+				ISubprogram.FUNCTION, false, false, "not null access constant Integer");
 
 		// Inner_Pkg package
 		List<IPackage> packageDeclarations = rootPackage.getPackages();
 		subprogramDeclarations = packageDeclarations.get(1).getSubprograms();
 		assertEquals(2, subprogramDeclarations.size());
 		this.checkSubprogram(subprogramDeclarations.get(0), "Procedure2",
-				ISubprogram.PROCEDURE, false, false);
-		this.checkSubprogram(subprogramDeclarations.get(1), "Function1",
-				ISubprogram.FUNCTION, false, false);
+				ISubprogram.PROCEDURE, false, false, null);
+		this.checkSubprogram(subprogramDeclarations.get(1), "Function3",
+				ISubprogram.FUNCTION, false, false, "access protected procedure");
 
 		// Deeply_Nested package
 		packageDeclarations = packageDeclarations.get(1).getPackages();
@@ -201,22 +208,22 @@ public class FactoryTest {
 		ISubprogram mainSubprogram = this.mainSut.getMainSubprogram();
 		assertNull(this.mainSut.getRootPackage());
 		this.checkSubprogram(mainSubprogram, "Main", ISubprogram.PROCEDURE,
-				false, false);
-		
+				false, false, null);
+
 		mainSubprogram = this.renamedProc.getMainSubprogram();
 		assertNull(this.mainSut.getRootPackage());
-		this.checkSubprogram(mainSubprogram, "Renaming_Proc", ISubprogram.PROCEDURE,
-				false, false);
-		
+		this.checkSubprogram(mainSubprogram, "Renaming_Proc",
+				ISubprogram.PROCEDURE, false, false, null);
+
 		mainSubprogram = this.genericDecProc.getMainSubprogram();
 		assertNull(this.mainSut.getRootPackage());
-		this.checkSubprogram(mainSubprogram, "Generic_Dec_Proc", ISubprogram.PROCEDURE,
-				false, false);
-		
+		this.checkSubprogram(mainSubprogram, "Generic_Dec_Proc",
+				ISubprogram.PROCEDURE, false, false, null);
+
 		mainSubprogram = this.genericInstProc.getMainSubprogram();
 		assertNull(this.mainSut.getRootPackage());
-		this.checkSubprogram(mainSubprogram, "Generic_Inst_Proc", ISubprogram.PROCEDURE,
-				false, false);
+		this.checkSubprogram(mainSubprogram, "Generic_Inst_Proc",
+				ISubprogram.PROCEDURE, false, false, null);
 	}
 
 	@Test

@@ -4,11 +4,20 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 import org.ada4j.api.model.ISubprogram;
+import org.ada4j.api.model.IType;
 import org.ada4j.internal.model.CompilationUnit;
 import org.ada4j.internal.model.Package;
 import org.ada4j.internal.model.Subprogram;
+import org.ada4j.internal.model.Type;
 import org.antlr.v4.runtime.misc.NotNull;
 
+/**
+ * This class uses ANTLR parse tree listener mechanism to build a simplified Ada
+ * model of a given compilation unit.
+ * 
+ * @author RS
+ *
+ */
 public class Ada2005FileListener extends Ada2005BaseListener {
 
 	private CompilationUnit compilationUnit;
@@ -51,7 +60,7 @@ public class Ada2005FileListener extends Ada2005BaseListener {
 					ctx.defining_program_unit_name().getText(),
 					ctx.PROCEDURE() != null ? ISubprogram.PROCEDURE
 							: ISubprogram.FUNCTION,
-					false, this.isInPrivatePart);
+					false, this.isInPrivatePart, null);
 			this.addSubProgramToCurrentScope(subprogram);
 		}
 	};
@@ -92,7 +101,7 @@ public class Ada2005FileListener extends Ada2005BaseListener {
 				ctx.getParent().getParent() != null
 						&& ctx.getParent().getParent().getClass()
 								.equals(Ada2005Parser.Abstract_subprogram_declarationContext.class),
-				this.isInPrivatePart);
+				this.isInPrivatePart, null);
 
 		this.addSubProgramToCurrentScope(procedure);
 	}
@@ -118,15 +127,77 @@ public class Ada2005FileListener extends Ada2005BaseListener {
 		}
 	}
 
+	/**
+	 * Returns a textual representation of given access_definition rule context.
+	 */
+	private static String AccessDefinitionToString(
+			Ada2005Parser.Access_definitionContext accessDef) {
+		StringBuilder accessDefStringBuilder = new StringBuilder();
+
+		if (accessDef.null_exclusion() != null) {
+			accessDefStringBuilder.append("not null ");
+		}
+		accessDefStringBuilder.append("access ");
+
+		if (accessDef.CONSTANT() != null) {
+			accessDefStringBuilder.append("constant ");
+		}
+
+		if (accessDef.PROTECTED() != null) {
+			accessDefStringBuilder.append("protected ");
+		}
+
+		if (accessDef.subtype_mark() != null) {
+			accessDefStringBuilder
+					.append(accessDef.subtype_mark().name().getText());
+		} else if (accessDef.PROCEDURE() != null) {
+			accessDefStringBuilder.append("procedure");
+		} else if (accessDef.FUNCTION() != null) {
+			accessDefStringBuilder.append("function ");
+			accessDefStringBuilder.append(GetReturnTypeNameOfFunction(
+					accessDef.parameter_and_result_profile()));
+		}
+
+		return accessDefStringBuilder.toString();
+	}
+
+	/**
+	 * Returns a textual representation of given parameter_and_result_profile
+	 * return type.
+	 */
+	private static String GetReturnTypeNameOfFunction(
+			Ada2005Parser.Parameter_and_result_profileContext ctx) {
+		String result;
+
+		if (ctx.subtype_mark() != null) {
+			result = ctx.subtype_mark().name().getText();
+		} else {
+			Ada2005Parser.Access_definitionContext accessDef = ctx
+					.access_definition();
+
+			result = AccessDefinitionToString(accessDef);
+		}
+
+		return result;
+	}
+
+	private static IType GetReturnTypeOfFunction(
+			Ada2005Parser.Function_specificationContext ctx) {
+		return new Type(
+				GetReturnTypeNameOfFunction(ctx.parameter_and_result_profile()),
+				false);
+	}
+
 	@Override
 	public void enterFunction_specification(
 			@NotNull Ada2005Parser.Function_specificationContext ctx) {
+
 		Subprogram function = new Subprogram(
 				ctx.defining_designator().getText(), ISubprogram.FUNCTION,
 				ctx.getParent().getParent() != null
 						&& ctx.getParent().getParent().getClass()
 								.equals(Ada2005Parser.Abstract_subprogram_declarationContext.class),
-				this.isInPrivatePart);
+				this.isInPrivatePart, GetReturnTypeOfFunction(ctx));
 
 		this.addSubProgramToCurrentScope(function);
 

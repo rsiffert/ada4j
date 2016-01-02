@@ -21,7 +21,7 @@ public class Factory {
 	 * @return a compilation unit corresponding to given Ada source file which
 	 *         name is the one of the given file without extension.
 	 */
-	public static ICompilationUnit Create_Compilation_Unit(Path adasourceFile) {
+	public static ICompilationUnit CreateCompilationUnit(Path adasourceFile) {
 		return Parser.ParseAdaSourceFile(adasourceFile);
 	}
 
@@ -36,7 +36,7 @@ public class Factory {
 	 *         contents which name corresponds to <adaSourceFileName> without
 	 *         extension.
 	 */
-	public static ICompilationUnit Create_Compilation_Unit(
+	public static ICompilationUnit CreateCompilationUnit(
 			String adaSourceFileContents, String adaSourceFileName) {
 		return Parser.ParseAdaSourceFile(adaSourceFileContents,
 				adaSourceFileName);
