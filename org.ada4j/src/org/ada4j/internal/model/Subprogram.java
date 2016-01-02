@@ -2,7 +2,6 @@ package org.ada4j.internal.model;
 
 import java.util.List;
 
-import org.ada4j.api.model.INamedUnit;
 import org.ada4j.api.model.ISubprogram;
 import org.ada4j.api.model.IType;
 
@@ -13,14 +12,16 @@ public class Subprogram implements ISubprogram {
 	private boolean isAbstract;
 	private boolean isPrivate;
 	private IType returnType;
+	private List<IType> arguments;
 
 	public Subprogram(String name, int type, boolean isAbstract,
-			boolean isPrivate, IType returnType) {
+			boolean isPrivate, IType returnType, List<IType> arguments) {
 		this.type = type;
 		this.name = name;
 		this.isAbstract = isAbstract;
 		this.isPrivate = isPrivate;
 		this.returnType = returnType;
+		this.arguments = arguments;
 	}
 
 	@Override
@@ -44,9 +45,8 @@ public class Subprogram implements ISubprogram {
 	}
 
 	@Override
-	public List<INamedUnit> getArguments() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<IType> getArguments() {
+		return this.arguments;
 	}
 
 	@Override

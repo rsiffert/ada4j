@@ -41,10 +41,10 @@ public interface ISubprogram extends INamedUnit {
 	/**
 	 * Returns the arguments of subprogram.
 	 * 
-	 * @return a list containing the arguments of the subprogram, empty if
-	 *         subprogram takes no argument.
+	 * @return a list containing the types of the arguments of the subprogram,
+	 *         empty if subprogram takes no argument.
 	 */
-	public List<INamedUnit> getArguments();
+	public List<IType> getArguments();
 
 	/**
 	 * Returns the return type of subprogram (only applicable for function).

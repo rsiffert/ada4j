@@ -4,12 +4,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ada4j.api.Factory;
 import org.ada4j.api.model.ICompilationUnit;
 import org.ada4j.api.model.IPackage;
 import org.ada4j.api.model.ISubprogram;
+import org.ada4j.api.model.IType;
+import org.ada4j.internal.model.Type;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,10 +30,10 @@ public class FactoryTest {
 
 	@Before
 	public void createSuts() {
-		this.exampleSpec = Factory.CreateCompilationUnit(
-				new File("res", "example.ads").toPath());
-		this.exampleBody = Factory.CreateCompilationUnit(
-				new File("res", "example.adb").toPath());
+		this.exampleSpec = Factory
+				.CreateCompilationUnit(new File("res", "example.ads").toPath());
+		this.exampleBody = Factory
+				.CreateCompilationUnit(new File("res", "example.adb").toPath());
 		this.mainSut = Factory
 				.CreateCompilationUnit(new File("res", "main.ads").toPath());
 		this.renamedPkg = Factory.CreateCompilationUnit(
@@ -116,9 +119,15 @@ public class FactoryTest {
 
 	private void checkSubprogram(ISubprogram subprogToTest, String name,
 			int type, boolean isAbstract, boolean isPrivate,
-			String returnTypeName) {
+			String returnTypeName, List<IType> args) {
 		assertEquals(name, subprogToTest.getName());
 		assertEquals(type, subprogToTest.getType());
+		assertEquals(args.size(), subprogToTest.getArguments().size());
+		for (int argIdx = 0; argIdx < args.size(); argIdx++) {
+			assertEquals(args.get(argIdx).getName(),
+					subprogToTest.getArguments().get(argIdx).getName());
+		}
+
 		assertEquals(isAbstract, subprogToTest.isAbstract());
 		assertEquals(isPrivate, subprogToTest.isPrivate());
 		if (returnTypeName != null) {
@@ -133,17 +142,22 @@ public class FactoryTest {
 	public void testSubprogramsDeclarations() {
 		IPackage rootPackage = this.exampleSpec.getRootPackage();
 		List<ISubprogram> subprogramDeclarations;
+		List<IType> expectedArgs;
+		List<IType> noArgs = new ArrayList<IType>();
 
 		// Example package
 		subprogramDeclarations = rootPackage.getSubprograms();
 
 		assertEquals(3, subprogramDeclarations.size());
+		expectedArgs = new ArrayList<IType>();
+		expectedArgs.add(new Type("Integer", false));
 		this.checkSubprogram(subprogramDeclarations.get(0), "Procedure1",
-				ISubprogram.PROCEDURE, false, false, null);
+				ISubprogram.PROCEDURE, false, false, null, expectedArgs);
 		this.checkSubprogram(subprogramDeclarations.get(1), "Function2",
-				ISubprogram.FUNCTION, false, false, "Positive");
+				ISubprogram.FUNCTION, false, false, "Positive", noArgs);
 		this.checkSubprogram(subprogramDeclarations.get(2), "Private_Func",
-				ISubprogram.FUNCTION, false, true, "not null access constant Integer");
+				ISubprogram.FUNCTION, false, true,
+				"not null access constant Integer", noArgs);
 
 		// Empty package
 		IPackage emptyPackage = rootPackage.getPackages().get(0);
@@ -159,43 +173,58 @@ public class FactoryTest {
 		IPackage innerPkgPackage = rootPackage.getPackages().get(2);
 		subprogramDeclarations = innerPkgPackage.getSubprograms();
 		assertEquals(2, subprogramDeclarations.size());
+		expectedArgs = new ArrayList<IType>();
+		expectedArgs.add(new Type("T_Toto", false));
+		expectedArgs.add(new Type("Boolean", false));
 		this.checkSubprogram(subprogramDeclarations.get(0), "Procedure2",
-				ISubprogram.PROCEDURE, false, false, null);
+				ISubprogram.PROCEDURE, false, false, null, expectedArgs);
 		this.checkSubprogram(subprogramDeclarations.get(1), "Function1",
-				ISubprogram.FUNCTION, false, false, "access function Boolean");
+				ISubprogram.FUNCTION, false, false, "access function Boolean",
+				noArgs);
 
 		// Deeply_Nested package
 		IPackage deeplyNestedPackage = innerPkgPackage.getPackages().get(0);
 		subprogramDeclarations = deeplyNestedPackage.getSubprograms();
 		assertEquals(1, subprogramDeclarations.size());
 		this.checkSubprogram(subprogramDeclarations.get(0), "Deep_Inside",
-				ISubprogram.PROCEDURE, true, false, null);
+				ISubprogram.PROCEDURE, true, false, null, noArgs);
 
 	}
 
 	@Test
 	public void testSubprogramsBodies() {
 		IPackage rootPackage = this.exampleBody.getRootPackage();
+		List<IType> expectedArgs;
+		List<IType> noArgs = new ArrayList<IType>();
 
 		// Example package
 		List<ISubprogram> subprogramDeclarations = rootPackage.getSubprograms();
 
 		assertEquals(3, subprogramDeclarations.size());
+		expectedArgs = new ArrayList<IType>();
+		expectedArgs.add(new Type("Integer", false));
 		this.checkSubprogram(subprogramDeclarations.get(0), "Procedure1",
-				ISubprogram.PROCEDURE, false, false, null);
+				ISubprogram.PROCEDURE, false, false, null, expectedArgs);
 		this.checkSubprogram(subprogramDeclarations.get(1), "Function2",
-				ISubprogram.FUNCTION, false, false, "Positive");
+				ISubprogram.FUNCTION, false, false, "Positive", noArgs);
 		this.checkSubprogram(subprogramDeclarations.get(2), "Private_Func",
-				ISubprogram.FUNCTION, false, false, "not null access constant Integer");
+				ISubprogram.FUNCTION, false, false,
+				"not null access constant Integer", noArgs);
 
 		// Inner_Pkg package
 		List<IPackage> packageDeclarations = rootPackage.getPackages();
 		subprogramDeclarations = packageDeclarations.get(1).getSubprograms();
 		assertEquals(2, subprogramDeclarations.size());
+		expectedArgs = new ArrayList<IType>();
+		expectedArgs.add(new Type("T_Toto", false));
+		expectedArgs.add(new Type("Boolean", false));
 		this.checkSubprogram(subprogramDeclarations.get(0), "Procedure2",
-				ISubprogram.PROCEDURE, false, false, null);
+				ISubprogram.PROCEDURE, false, false, null, expectedArgs);
+		expectedArgs = new ArrayList<IType>();
+		expectedArgs.add(new Type("not null access constant Integer", false));
 		this.checkSubprogram(subprogramDeclarations.get(1), "Function3",
-				ISubprogram.FUNCTION, false, false, "access protected procedure");
+				ISubprogram.FUNCTION, false, false,
+				"access protected procedure", expectedArgs);
 
 		// Deeply_Nested package
 		packageDeclarations = packageDeclarations.get(1).getPackages();
@@ -205,25 +234,32 @@ public class FactoryTest {
 
 	@Test
 	public void testMainSubprograms() {
+		List<IType> expectedArgs;
+		List<IType> noArgs = new ArrayList<IType>();
+
 		ISubprogram mainSubprogram = this.mainSut.getMainSubprogram();
 		assertNull(this.mainSut.getRootPackage());
 		this.checkSubprogram(mainSubprogram, "Main", ISubprogram.PROCEDURE,
-				false, false, null);
+				false, false, null, noArgs);
 
 		mainSubprogram = this.renamedProc.getMainSubprogram();
 		assertNull(this.mainSut.getRootPackage());
+		expectedArgs = new ArrayList<IType>();
+		expectedArgs.add(new Type("Character", false));
 		this.checkSubprogram(mainSubprogram, "Renaming_Proc",
-				ISubprogram.PROCEDURE, false, false, null);
+				ISubprogram.PROCEDURE, false, false, null, expectedArgs);
 
 		mainSubprogram = this.genericDecProc.getMainSubprogram();
+		expectedArgs = new ArrayList<IType>();
+		expectedArgs.add(new Type("Character", false));
 		assertNull(this.mainSut.getRootPackage());
 		this.checkSubprogram(mainSubprogram, "Generic_Dec_Proc",
-				ISubprogram.PROCEDURE, false, false, null);
+				ISubprogram.PROCEDURE, false, false, null, expectedArgs);
 
 		mainSubprogram = this.genericInstProc.getMainSubprogram();
 		assertNull(this.mainSut.getRootPackage());
 		this.checkSubprogram(mainSubprogram, "Generic_Inst_Proc",
-				ISubprogram.PROCEDURE, false, false, null);
+				ISubprogram.PROCEDURE, false, false, null, noArgs);
 	}
 
 	@Test

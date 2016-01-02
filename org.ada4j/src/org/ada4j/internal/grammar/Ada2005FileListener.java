@@ -1,7 +1,9 @@
 package org.ada4j.internal.grammar;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
+import java.util.List;
 
 import org.ada4j.api.model.ISubprogram;
 import org.ada4j.api.model.IType;
@@ -11,8 +13,10 @@ import org.ada4j.internal.model.Subprogram;
 import org.ada4j.internal.model.Type;
 import org.antlr.v4.runtime.misc.NotNull;
 
+import com.google.common.base.Preconditions;
+
 /**
- * This class uses ANTLR parse tree listener mechanism to build a simplified Ada
+ * This class uses ANTLR parse tree listener mechanism to build a simple Ada
  * model of a given compilation unit.
  * 
  * @author RS
@@ -60,7 +64,7 @@ public class Ada2005FileListener extends Ada2005BaseListener {
 					ctx.defining_program_unit_name().getText(),
 					ctx.PROCEDURE() != null ? ISubprogram.PROCEDURE
 							: ISubprogram.FUNCTION,
-					false, this.isInPrivatePart, null);
+					false, this.isInPrivatePart, null, new ArrayList<IType>());
 			this.addSubProgramToCurrentScope(subprogram);
 		}
 	};
@@ -92,6 +96,40 @@ public class Ada2005FileListener extends Ada2005BaseListener {
 		this.packages.pop();
 	}
 
+	/**
+	 * Returns the types of the arguments corresponding to given formal_part
+	 * rule context.
+	 * 
+	 * @param formalPart
+	 *            a non-null formal_part rule context.
+	 * @return a list of IType corresponding to the formal_part arguments in the
+	 *         declaration order.
+	 */
+	private static List<IType> GetArgumentTypesOf(
+			Ada2005Parser.Formal_partContext formalPart) {
+		Preconditions.checkNotNull(formalPart);
+		List<Ada2005Parser.Parameter_specificationContext> arguments = formalPart
+				.parameter_specification();
+		List<IType> argumentTypes = new ArrayList<IType>(arguments.size());
+
+		for (int argIdx = 0; argIdx < arguments.size(); argIdx++) {
+			String typeName;
+			Ada2005Parser.Parameter_type_specificationContext typeDefinition = arguments
+					.get(argIdx).parameter_type_specification();
+
+			if (typeDefinition.subtype_mark() != null) {
+				typeName = typeDefinition.subtype_mark().getText();
+			} else {
+				typeName = AccessDefinitionToString(
+						typeDefinition.access_definition());
+			}
+
+			argumentTypes.add(new Type(typeName, false));
+		}
+
+		return argumentTypes;
+	}
+
 	@Override
 	public void enterProcedure_specification(
 			@NotNull Ada2005Parser.Procedure_specificationContext ctx) {
@@ -101,7 +139,11 @@ public class Ada2005FileListener extends Ada2005BaseListener {
 				ctx.getParent().getParent() != null
 						&& ctx.getParent().getParent().getClass()
 								.equals(Ada2005Parser.Abstract_subprogram_declarationContext.class),
-				this.isInPrivatePart, null);
+				this.isInPrivatePart, null,
+				ctx.parameter_profile().formal_part() == null
+						? new ArrayList<IType>()
+						: GetArgumentTypesOf(
+								ctx.parameter_profile().formal_part()));
 
 		this.addSubProgramToCurrentScope(procedure);
 	}
@@ -197,7 +239,11 @@ public class Ada2005FileListener extends Ada2005BaseListener {
 				ctx.getParent().getParent() != null
 						&& ctx.getParent().getParent().getClass()
 								.equals(Ada2005Parser.Abstract_subprogram_declarationContext.class),
-				this.isInPrivatePart, GetReturnTypeOfFunction(ctx));
+				this.isInPrivatePart, GetReturnTypeOfFunction(ctx),
+				ctx.parameter_and_result_profile().formal_part() == null
+						? new ArrayList<IType>()
+						: GetArgumentTypesOf(ctx.parameter_and_result_profile()
+								.formal_part()));
 
 		this.addSubProgramToCurrentScope(function);
 

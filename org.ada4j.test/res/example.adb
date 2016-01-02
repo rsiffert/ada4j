@@ -18,7 +18,7 @@ package body Example is
             null;
         end;
         
-        function Function3 return access protected procedure
+        function Function3(Pointer : not null access constant Integer) return access protected procedure
         is
         begin
             return False;
