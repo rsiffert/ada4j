@@ -45,6 +45,14 @@ public class Ada2005FileListener extends Ada2005BaseListener {
 			Package declaredPkg = new Package(
 					ctx.defining_program_unit_name().getText());
 			this.addPackageToCurrentScope(declaredPkg, false);
+		} else if (ctx.PROCEDURE() != null || ctx.FUNCTION() != null) {
+			// subprogram instantiation
+			Subprogram subprogram = new Subprogram(
+					ctx.defining_program_unit_name().getText(),
+					ctx.PROCEDURE() != null ? ISubprogram.PROCEDURE
+							: ISubprogram.FUNCTION,
+					false, this.isInPrivatePart);
+			this.addSubProgramToCurrentScope(subprogram);
 		}
 	};
 

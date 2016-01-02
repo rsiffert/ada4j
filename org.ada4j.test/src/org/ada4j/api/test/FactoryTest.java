@@ -18,9 +18,12 @@ public class FactoryTest {
 	private ICompilationUnit exampleSpec;
 	private ICompilationUnit exampleBody;
 	private ICompilationUnit mainSut;
-	private ICompilationUnit renamedPackage;
-	private ICompilationUnit genericDec;
-	private ICompilationUnit genericInst;
+	private ICompilationUnit renamedPkg;
+	private ICompilationUnit genericDecPkg;
+	private ICompilationUnit genericInstPkg;
+	private ICompilationUnit renamedProc;
+	private ICompilationUnit genericDecProc;
+	private ICompilationUnit genericInstProc;
 
 	@Before
 	public void createSuts() {
@@ -30,12 +33,18 @@ public class FactoryTest {
 				new File("res", "example.adb").toPath());
 		this.mainSut = Factory
 				.Create_Compilation_Unit(new File("res", "main.ads").toPath());
-		this.renamedPackage = Factory.Create_Compilation_Unit(
-				new File("res", "renaming.ads").toPath());
-		this.genericInst = Factory.Create_Compilation_Unit(
-				new File("res", "generic_inst.ads").toPath());
-		this.genericDec = Factory.Create_Compilation_Unit(
-				new File("res", "generic_dec.ads").toPath());
+		this.renamedPkg = Factory.Create_Compilation_Unit(
+				new File("res", "renaming_pkg.ads").toPath());
+		this.genericInstPkg = Factory.Create_Compilation_Unit(
+				new File("res", "generic_inst_pkg.ads").toPath());
+		this.genericDecPkg = Factory.Create_Compilation_Unit(
+				new File("res", "generic_dec_pkg.ads").toPath());
+		this.renamedProc = Factory.Create_Compilation_Unit(
+				new File("res", "renaming_proc.ads").toPath());
+		this.genericInstProc = Factory.Create_Compilation_Unit(
+				new File("res", "generic_inst_proc.ads").toPath());
+		this.genericDecProc = Factory.Create_Compilation_Unit(
+				new File("res", "generic_dec_proc.ads").toPath());
 	}
 
 	@Test
@@ -61,15 +70,16 @@ public class FactoryTest {
 				"Deeply_Nested", "Inner_Pkg");
 
 		// Renamed package
-		assertEquals("Renaming",
-				this.renamedPackage.getRootPackage().getName());
+		assertEquals("Renaming_Pkg",
+				this.renamedPkg.getRootPackage().getName());
 
 		// Generic package declaration
-		assertEquals("Generic_Dec", this.genericDec.getRootPackage().getName());
+		assertEquals("Generic_Dec_Pkg",
+				this.genericDecPkg.getRootPackage().getName());
 
 		// Generic package instantiation
-		assertEquals("Generic_Inst",
-				this.genericInst.getRootPackage().getName());
+		assertEquals("Generic_Inst_Pkg",
+				this.genericInstPkg.getRootPackage().getName());
 	}
 
 	@Test
@@ -187,10 +197,25 @@ public class FactoryTest {
 	}
 
 	@Test
-	public void testProcedureOutsidePackage() {
+	public void testMainSubprograms() {
 		ISubprogram mainSubprogram = this.mainSut.getMainSubprogram();
 		assertNull(this.mainSut.getRootPackage());
 		this.checkSubprogram(mainSubprogram, "Main", ISubprogram.PROCEDURE,
+				false, false);
+		
+		mainSubprogram = this.renamedProc.getMainSubprogram();
+		assertNull(this.mainSut.getRootPackage());
+		this.checkSubprogram(mainSubprogram, "Renaming_Proc", ISubprogram.PROCEDURE,
+				false, false);
+		
+		mainSubprogram = this.genericDecProc.getMainSubprogram();
+		assertNull(this.mainSut.getRootPackage());
+		this.checkSubprogram(mainSubprogram, "Generic_Dec_Proc", ISubprogram.PROCEDURE,
+				false, false);
+		
+		mainSubprogram = this.genericInstProc.getMainSubprogram();
+		assertNull(this.mainSut.getRootPackage());
+		this.checkSubprogram(mainSubprogram, "Generic_Inst_Proc", ISubprogram.PROCEDURE,
 				false, false);
 	}
 

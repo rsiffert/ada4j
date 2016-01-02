@@ -1,1 +1,0 @@
-package Renaming renames Standard;

@@ -1,0 +1,1 @@
+procedure Renaming_Proc(C : in Character) renames GNAT.IO.Put;
