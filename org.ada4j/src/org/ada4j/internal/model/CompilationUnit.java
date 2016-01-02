@@ -1,21 +1,20 @@
 package org.ada4j.internal.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.ada4j.api.model.ICompilationUnit;
 import org.ada4j.api.model.IPackage;
 import org.ada4j.api.model.ISubprogram;
 
+import com.google.common.base.Preconditions;
+
 public class CompilationUnit implements ICompilationUnit {
 
-	private List<ISubprogram> subprograms;
-	private List<IPackage> packages;
+	private ISubprogram mainSubprogram;
+	private IPackage rootPackage;
 	private String name;
 
 	public CompilationUnit(String name) {
-		this.subprograms = new ArrayList<ISubprogram>();
-		this.packages = new ArrayList<IPackage>();
+		this.mainSubprogram = null;
+		this.rootPackage = null;
 		this.name = name;
 	}
 
@@ -24,21 +23,25 @@ public class CompilationUnit implements ICompilationUnit {
 		return this.name;
 	}
 
-	public void addPackage(IPackage newPackage) {
-		this.packages.add(newPackage);
+	public void setRootPackage(IPackage newPackage) {
+		Preconditions.checkState(
+				this.mainSubprogram == null && this.rootPackage == null);
+		this.rootPackage = newPackage;
 	}
-	
-	public void addSubprogram(ISubprogram subprogram) {
-		this.subprograms.add(subprogram);
+
+	public void setMainSubprogram(ISubprogram subprogram) {
+		Preconditions.checkState(
+				this.mainSubprogram == null && this.rootPackage == null);
+		this.mainSubprogram = subprogram;
 	}
 
 	@Override
-	public List<ISubprogram> getSubprograms() {
-		return this.subprograms;
+	public ISubprogram getMainSubprogram() {
+		return this.mainSubprogram;
 	}
 
 	@Override
-	public List<IPackage> getPackages() {
-		return this.packages;
+	public IPackage getRootPackage() {
+		return this.rootPackage;
 	}
 }

@@ -1,0 +1,1 @@
+package Generic_Inst is new Generic_Dec(T_Item => Integer);

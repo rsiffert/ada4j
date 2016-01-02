@@ -1,14 +1,22 @@
 package Example is
 
-    procedure Procedure1;
+    procedure Procedure1(Arg1 : in Integer);
     
     type T_Toto is tagged private;
+    
+    type T_Inteface is limited interface;
+    
+    package Empty is
+    
+    end Empty;
+    
+    package Still_Empty renames Empty;
     
     package Inner_Pkg is
     
         subtype T_Titi is Boolean;
     
-        procedure Procedure2;
+        procedure Procedure2(Toto : in T_Toto; Arg2 : out Boolean);
         
         function Function1 return Boolean;
         
@@ -25,7 +33,7 @@ package Example is
     
 private
 
-    type T_Toto is null record;
+    type T_Toto is tagged null record;
     
     type T_Other is new Integer;
     

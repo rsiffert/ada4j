@@ -26,15 +26,42 @@ public class Ada2005FileListener extends Ada2005BaseListener {
 		Package declaredPkg = new Package(ctx.package_specification()
 				.defining_program_unit_name().getText());
 
-		this.addPackageToCurrentScope(declaredPkg);
+		this.addPackageToCurrentScope(declaredPkg, true);
 	}
+
+	@Override
+	public void enterGeneric_package_declaration(
+			Ada2005Parser.Generic_package_declarationContext ctx) {
+		Package declaredPkg = new Package(ctx.package_specification()
+				.defining_program_unit_name().getText());
+		this.addPackageToCurrentScope(declaredPkg, true);
+	};
+
+	@Override
+	public void enterGeneric_instantiation(
+			Ada2005Parser.Generic_instantiationContext ctx) {
+		if (ctx.PACKAGE() != null) {
+			// generic package instantiation
+			Package declaredPkg = new Package(
+					ctx.defining_program_unit_name().getText());
+			this.addPackageToCurrentScope(declaredPkg, false);
+		}
+	};
+
+	@Override
+	public void enterPackage_renaming_declaration(
+			Ada2005Parser.Package_renaming_declarationContext ctx) {
+		Package declaredPkg = new Package(
+				ctx.defining_program_unit_name().getText());
+		this.addPackageToCurrentScope(declaredPkg, false);
+	};
 
 	@Override
 	public void enterPackage_body(Ada2005Parser.Package_bodyContext ctx) {
 		Package declaredPkg = new Package(
 				ctx.defining_program_unit_name().getText());
 
-		this.addPackageToCurrentScope(declaredPkg);
+		this.addPackageToCurrentScope(declaredPkg, true);
 	}
 
 	@Override
@@ -66,18 +93,21 @@ public class Ada2005FileListener extends Ada2005BaseListener {
 		if (this.packages.peek() != null) {
 			this.packages.peek().addSubprogram(subprogram);
 		} else {
-			this.compilationUnit.addSubprogram(subprogram);
+			this.compilationUnit.setMainSubprogram(subprogram);
 		}
 	}
 
-	private void addPackageToCurrentScope(Package newPackage) {
+	private void addPackageToCurrentScope(Package newPackage,
+			boolean packageDefinesANewScope) {
 		if (this.packages.peek() != null) {
 			this.packages.peek().addPackage(newPackage);
 			newPackage.setParent(this.packages.getFirst());
 		} else {
-			this.compilationUnit.addPackage(newPackage);
+			this.compilationUnit.setRootPackage(newPackage);
 		}
-		this.packages.push(newPackage);
+		if (packageDefinesANewScope) {
+			this.packages.push(newPackage);
+		}
 	}
 
 	@Override

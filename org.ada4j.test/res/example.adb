@@ -6,6 +6,10 @@ package body Example is
         null;
     end;
     
+    package body Empty is
+    
+    end Empty;
+    
     package body Inner_Pkg is
     
         procedure Procedure2

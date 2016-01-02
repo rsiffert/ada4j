@@ -1,5 +1,8 @@
 package org.ada4j.internal.model;
 
+import java.util.List;
+
+import org.ada4j.api.model.INamedUnit;
 import org.ada4j.api.model.ISubprogram;
 
 public class Subprogram implements ISubprogram {
@@ -35,6 +38,12 @@ public class Subprogram implements ISubprogram {
 	@Override
 	public boolean isPrivate() {
 		return this.isPrivate;
+	}
+
+	@Override
+	public List<INamedUnit> getArguments() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
