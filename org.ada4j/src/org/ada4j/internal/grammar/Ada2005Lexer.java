@@ -134,7 +134,7 @@ public class Ada2005Lexer extends Lexer {
 	  super.emit(token);
 	}
 
-	protected boolean previousTokenIs(int tokenType) {
+	public boolean previousTokenIs(int tokenType) {
 	  return last != null && last.getType() == tokenType;
 	}
 
