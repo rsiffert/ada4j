@@ -8,9 +8,9 @@ import java.io.StringReader;
 import java.nio.file.Path;
 
 import org.ada4j.api.model.ICompilationUnit;
-import org.ada4j.internal.grammar.Ada2005FileListener;
-import org.ada4j.internal.grammar.Ada2005Lexer;
-import org.ada4j.internal.grammar.Ada2005Parser;
+import org.ada4j.internal.grammar.ada2005.Ada2005FileListener;
+import org.ada4j.internal.grammar.ada2005.Ada2005Lexer;
+import org.ada4j.internal.grammar.ada2005.Ada2005Parser;
 import org.ada4j.internal.model.CompilationUnit;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
