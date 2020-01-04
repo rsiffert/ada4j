@@ -1,4 +1,4 @@
-// Generated from Ada2012.g4 by ANTLR 4.7.2
+// Generated from D:/Users/RS/code/ada4j/org.ada4j/src/org/ada4j/internal/grammar/ada2012\Ada2012.g4 by ANTLR 4.7.2
 package org.ada4j.internal.grammar.ada2012;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -35,6 +35,18 @@ public class Ada2012BaseListener implements Ada2012Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitPragma(Ada2012Parser.PragmaContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterParenthesized_pragma_argument_associations(Ada2012Parser.Parenthesized_pragma_argument_associationsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitParenthesized_pragma_argument_associations(Ada2012Parser.Parenthesized_pragma_argument_associationsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -1000,6 +1012,18 @@ public class Ada2012BaseListener implements Ada2012Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterQualified_expression_component(Ada2012Parser.Qualified_expression_componentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitQualified_expression_component(Ada2012Parser.Qualified_expression_componentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterExplicit_dereference_component(Ada2012Parser.Explicit_dereference_componentContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1103,6 +1127,18 @@ public class Ada2012BaseListener implements Ada2012Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitIndexed_component(Ada2012Parser.Indexed_componentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterParenthesized_expressions(Ada2012Parser.Parenthesized_expressionsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitParenthesized_expressions(Ada2012Parser.Parenthesized_expressionsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -1456,6 +1492,30 @@ public class Ada2012BaseListener implements Ada2012Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterParenthesized_conditional_expression(Ada2012Parser.Parenthesized_conditional_expressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitParenthesized_conditional_expression(Ada2012Parser.Parenthesized_conditional_expressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterParenthesized_quantified_expression(Ada2012Parser.Parenthesized_quantified_expressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitParenthesized_quantified_expression(Ada2012Parser.Parenthesized_quantified_expressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterLogical_operator(Ada2012Parser.Logical_operatorContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1643,6 +1703,18 @@ public class Ada2012BaseListener implements Ada2012Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitQualified_expression(Ada2012Parser.Qualified_expressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterParenthesized_expression(Ada2012Parser.Parenthesized_expressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitParenthesized_expression(Ada2012Parser.Parenthesized_expressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -2603,6 +2675,18 @@ public class Ada2012BaseListener implements Ada2012Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitAccept_statement(Ada2012Parser.Accept_statementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterParenthesized_entry_index(Ada2012Parser.Parenthesized_entry_indexContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitParenthesized_entry_index(Ada2012Parser.Parenthesized_entry_indexContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

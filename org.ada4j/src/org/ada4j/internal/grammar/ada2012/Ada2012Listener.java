@@ -1,4 +1,4 @@
-// Generated from Ada2012.g4 by ANTLR 4.7.2
+// Generated from D:/Users/RS/code/ada4j/org.ada4j/src/org/ada4j/internal/grammar/ada2012\Ada2012.g4 by ANTLR 4.7.2
 package org.ada4j.internal.grammar.ada2012;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -27,6 +27,16 @@ public interface Ada2012Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPragma(Ada2012Parser.PragmaContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Ada2012Parser#parenthesized_pragma_argument_associations}.
+	 * @param ctx the parse tree
+	 */
+	void enterParenthesized_pragma_argument_associations(Ada2012Parser.Parenthesized_pragma_argument_associationsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Ada2012Parser#parenthesized_pragma_argument_associations}.
+	 * @param ctx the parse tree
+	 */
+	void exitParenthesized_pragma_argument_associations(Ada2012Parser.Parenthesized_pragma_argument_associationsContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Ada2012Parser#pragma_argument_association}.
 	 * @param ctx the parse tree
@@ -828,6 +838,16 @@ public interface Ada2012Listener extends ParseTreeListener {
 	 */
 	void exitName_component(Ada2012Parser.Name_componentContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link Ada2012Parser#qualified_expression_component}.
+	 * @param ctx the parse tree
+	 */
+	void enterQualified_expression_component(Ada2012Parser.Qualified_expression_componentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Ada2012Parser#qualified_expression_component}.
+	 * @param ctx the parse tree
+	 */
+	void exitQualified_expression_component(Ada2012Parser.Qualified_expression_componentContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link Ada2012Parser#explicit_dereference_component}.
 	 * @param ctx the parse tree
 	 */
@@ -917,6 +937,16 @@ public interface Ada2012Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitIndexed_component(Ada2012Parser.Indexed_componentContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Ada2012Parser#parenthesized_expressions}.
+	 * @param ctx the parse tree
+	 */
+	void enterParenthesized_expressions(Ada2012Parser.Parenthesized_expressionsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Ada2012Parser#parenthesized_expressions}.
+	 * @param ctx the parse tree
+	 */
+	void exitParenthesized_expressions(Ada2012Parser.Parenthesized_expressionsContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Ada2012Parser#slice}.
 	 * @param ctx the parse tree
@@ -1208,6 +1238,26 @@ public interface Ada2012Listener extends ParseTreeListener {
 	 */
 	void exitPrimary(Ada2012Parser.PrimaryContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link Ada2012Parser#parenthesized_conditional_expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterParenthesized_conditional_expression(Ada2012Parser.Parenthesized_conditional_expressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Ada2012Parser#parenthesized_conditional_expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitParenthesized_conditional_expression(Ada2012Parser.Parenthesized_conditional_expressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Ada2012Parser#parenthesized_quantified_expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterParenthesized_quantified_expression(Ada2012Parser.Parenthesized_quantified_expressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Ada2012Parser#parenthesized_quantified_expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitParenthesized_quantified_expression(Ada2012Parser.Parenthesized_quantified_expressionContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link Ada2012Parser#logical_operator}.
 	 * @param ctx the parse tree
 	 */
@@ -1367,6 +1417,16 @@ public interface Ada2012Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitQualified_expression(Ada2012Parser.Qualified_expressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Ada2012Parser#parenthesized_expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterParenthesized_expression(Ada2012Parser.Parenthesized_expressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Ada2012Parser#parenthesized_expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitParenthesized_expression(Ada2012Parser.Parenthesized_expressionContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Ada2012Parser#allocator}.
 	 * @param ctx the parse tree
@@ -2167,6 +2227,16 @@ public interface Ada2012Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAccept_statement(Ada2012Parser.Accept_statementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Ada2012Parser#parenthesized_entry_index}.
+	 * @param ctx the parse tree
+	 */
+	void enterParenthesized_entry_index(Ada2012Parser.Parenthesized_entry_indexContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Ada2012Parser#parenthesized_entry_index}.
+	 * @param ctx the parse tree
+	 */
+	void exitParenthesized_entry_index(Ada2012Parser.Parenthesized_entry_indexContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Ada2012Parser#entry_index}.
 	 * @param ctx the parse tree

@@ -37,7 +37,7 @@ pragma_argument_association
     (
         IDENTIFIER RARROW
     )? expression
-; // alternative name supprim�e car redondante 
+; // redundant alternative name deleted 
 
 basic_declaration
 :
@@ -928,7 +928,7 @@ type_conversion
 :
     subtype_mark LPAR expression RPAR;
     // | subtype_mark LPAR name RPAR 
-    // alternative supprim�e car redondante 
+    // redundant alternative deleted 
 
 qualified_expression
 :
@@ -1220,7 +1220,7 @@ procedure_call_statement
 :
     prefix actual_parameter_part SEMI_COLON;
     // | name SEMI_COLON
-    // alternative supprim�e car redondante 
+    // redundant alternative deleted 
 
 function_call
 :
@@ -1246,7 +1246,7 @@ explicit_actual_parameter
 :
     expression;
     // | name
-    //alternative supprim�e car redondante
+    // redundant alternative deleted
 
 simple_return_statement
 :
@@ -2205,7 +2205,7 @@ attribute_definition_clause
 :
     FOR local_name APOSTROPHE attribute_designator USE expression SEMI_COLON;
    //FOR local_name APOSTROPHE attribute_designator USE name SEMI_COLON
-   //alternative supprim�e car redondante
+   // redundant alternative deleted
 
 enumeration_representation_clause
 :
@@ -2264,7 +2264,7 @@ restriction
 restriction_parameter_argument
 :
     //name |
-    // alternative supprim�e car redondante
+    // redundant alternative deleted
     expression;
 
 delta_constraint

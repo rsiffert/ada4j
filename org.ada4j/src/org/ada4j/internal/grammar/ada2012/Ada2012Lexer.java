@@ -1,4 +1,4 @@
-// Generated from Ada2012.g4 by ANTLR 4.7.2
+// Generated from D:/Users/RS/code/ada4j/org.ada4j/src/org/ada4j/internal/grammar/ada2012\Ada2012.g4 by ANTLR 4.7.2
 package org.ada4j.internal.grammar.ada2012;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;

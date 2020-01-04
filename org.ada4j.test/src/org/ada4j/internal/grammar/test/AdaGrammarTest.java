@@ -257,6 +257,7 @@ class Ada2012TestParser implements AdaParser {
 		Ada2012Lexer lexer = null;
 		CommonTokenStream tokenStream = null;
 		CharStream input = null;
+		boolean parsingSuccessful = true;
 
 		try {
 			input = CharStreams.fromFileName(file.getAbsolutePath());
@@ -266,30 +267,28 @@ class Ada2012TestParser implements AdaParser {
 
 			tokenStream = new CommonTokenStream(lexer);
 			parser = new Ada2012Parser(tokenStream);
-			// try fast parsing strategy (SLL) first
-			parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
+			parser.getInterpreter().setPredictionMode(PredictionMode.LL);
 			parser.removeErrorListeners();
 			parser.setErrorHandler(new BailErrorStrategy());
 			parser.addErrorListener(errorListener);
 			parser.compilation();
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			parsingSuccessful = errorListener.isTestOk();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (RuntimeException e) {
-			if (e instanceof ParseCancellationException) {
-				// fallback to nominal parsing strategy (LL) in case of failure
-				tokenStream.seek(0);
-				errorListener.reset();
-				parser.setErrorHandler(new DefaultErrorStrategy());
-				parser.getInterpreter().setPredictionMode(PredictionMode.LL);
-				parser.compilation();
-			} else {
-				e.printStackTrace();
-			}
+			parsingSuccessful = false;
+		} catch (ParseCancellationException e) {
+			tokenStream.seek(0);
+			errorListener.reset();
+			parser.getInterpreter().setPredictionMode(PredictionMode.LL_EXACT_AMBIG_DETECTION);
+			parser.setErrorHandler(new DefaultErrorStrategy());
+			parser.compilation();
+			parsingSuccessful = errorListener.isTestOk();
 		}
 
-		return errorListener.isTestOk();
+		if (!parsingSuccessful) {
+			System.err.println("Parsing error on " + file.getName() + ": " + errorListener.getErrorMsg());
+		}
+
+		return parsingSuccessful;
 	}
 }

@@ -33,11 +33,18 @@ pragma
 :
     PRAGMA IDENTIFIER
     (
-        LPAR pragma_argument_association
+        parenthesized_pragma_argument_associations
+    )? SEMI_COLON
+;
+
+parenthesized_pragma_argument_associations
+@init {this.parenthesizedContext = true;}
+@after {this.parenthesizedContext = false;}
+:
+LPAR pragma_argument_association
         (
             COMMA pragma_argument_association
         )* RPAR
-    )? SEMI_COLON
 ;
 
 //2.8
@@ -47,7 +54,10 @@ pragma_argument_association
         IDENTIFIER RARROW
     )? expression
     | aspect_mark RARROW expression
-; // redundant "name" alternatives deleted
+    |  (
+           IDENTIFIER RARROW
+       )? name
+    | aspect_mark RARROW name;
 
 //3.1
 basic_declaration
@@ -719,15 +729,24 @@ name_component :
                | indexed_slice_type_conv_or_function_call_component
                | selected_component_component
                | attribute_reference_component
-               | qualified_expression
+               | qualified_expression_component
                | generalized_indexing_component;
+
+//4.1
+qualified_expression_component
+:
+    APOSTROPHE parenthesized_expression
+    | APOSTROPHE aggregate;
 
 //4.1
 explicit_dereference_component : DOT ALL;
 
 //4.1
-indexed_slice_type_conv_or_function_call_component:
-                                                      LPAR index_or_parameter_value (COMMA index_or_parameter_value)* RPAR;
+indexed_slice_type_conv_or_function_call_component
+@init {this.parenthesizedContext = true;}
+@after {this.parenthesizedContext = false;}
+:
+    LPAR index_or_parameter_value (COMMA index_or_parameter_value)* RPAR;
 
 index_or_parameter_value: expression | discrete_range | parameter_association;
 
@@ -761,7 +780,14 @@ explicit_dereference
 //4.1.1
 indexed_component
 :
-    prefix LPAR expression
+    prefix parenthesized_expressions
+;
+
+parenthesized_expressions
+@init {this.parenthesizedContext = true;}
+@after {this.parenthesizedContext = false;}
+:
+LPAR expression
     (
         COMMA expression
     )* RPAR
@@ -800,7 +826,7 @@ attribute_designator
 :
     IDENTIFIER
     (
-        LPAR expression RPAR
+        parenthesized_expression
     )?
     |
     (
@@ -822,7 +848,7 @@ range_attribute_designator
 :
     RANGE
     (
-        LPAR expression RPAR
+        parenthesized_expression
     )?
 ;
 
@@ -840,6 +866,8 @@ aggregate
 
 //4.3.1
 record_aggregate
+@init {this.parenthesizedContext = true;}
+@after {this.parenthesizedContext = false;}
 :
     LPAR record_component_association_list RPAR
 ;
@@ -875,6 +903,8 @@ component_choice_list
 
 //4.3.2
 extension_aggregate
+@init {this.parenthesizedContext = true;}
+@after {this.parenthesizedContext = false;}
 :
     LPAR ancestor_part WITH record_component_association_list RPAR
 ;
@@ -895,7 +925,9 @@ array_aggregate
 
 //4.3.3
 positional_array_aggregate
-: 
+@init {this.parenthesizedContext = true;}
+@after {this.parenthesizedContext = false;}
+:
     LPAR expression COMMA expression
     (
         COMMA expression
@@ -912,6 +944,8 @@ positional_array_aggregate
 
 //4.3.3
 named_array_aggregate
+@init {this.parenthesizedContext = true;}
+@after {this.parenthesizedContext = false;}
 :
     LPAR array_component_association
     (
@@ -1016,15 +1050,27 @@ primary
     (NULL |
          STRING_LITERAL)
     | name
-    | qualified_expression
     | allocator
-    | LPAR expression RPAR
-    | LPAR conditional_expression RPAR
+    | parenthesized_expression
+    | parenthesized_conditional_expression
     | {this.parenthesizedContext}? conditional_expression // parentheses may be omitted if the context already contains parentheses (expression function e.g.)
-    | LPAR quantified_expression RPAR
+    | parenthesized_quantified_expression
     | {this.parenthesizedContext}? quantified_expression // parentheses may be omitted if the context already contains parentheses (expression function e.g.)
     | aggregate;
 
+parenthesized_conditional_expression
+@init {this.parenthesizedContext = true;}
+@after {this.parenthesizedContext = false;}
+:
+LPAR conditional_expression RPAR
+;
+
+parenthesized_quantified_expression
+@init {this.parenthesizedContext = true;}
+@after {this.parenthesizedContext = false;}
+:
+LPAR quantified_expression RPAR
+;
 
 //4.5
 logical_operator
@@ -1111,16 +1157,22 @@ predicate : expression;
 //4.6
 type_conversion
 :
-    subtype_mark LPAR expression RPAR;
-    // redundant "name" alternative deleted
+    subtype_mark LPAR expression RPAR
+    | subtype_mark LPAR name RPAR;
 
 //4.7
 qualified_expression
 :
-    subtype_mark APOSTROPHE LPAR expression RPAR
+    subtype_mark APOSTROPHE parenthesized_expression
     | subtype_mark APOSTROPHE aggregate
 ;
 
+parenthesized_expression
+@init {this.parenthesizedContext = true;}
+                                           @after {this.parenthesizedContext = false;}
+:
+    LPAR expression RPAR
+;
 //4.8
 allocator
 :
@@ -1442,23 +1494,25 @@ subprogram_body
 //6.4
 procedure_call_statement
 :
-    prefix actual_parameter_part SEMI_COLON;
-    //redundant "name" alternative deleted
+    name SEMI_COLON
+    | prefix actual_parameter_part SEMI_COLON;
 
 //6.4
 function_call
 :
-    prefix actual_parameter_part
-    //redundant "name" alternative deleted
+    name
+    | prefix actual_parameter_part
 ;
 
 //6.4
 actual_parameter_part
+@init {this.parenthesizedContext = true;}
+@after {this.parenthesizedContext = false;}
 :
     LPAR parameter_association
-    (
-        COMMA parameter_association
-    )* RPAR
+             (
+                 COMMA parameter_association
+             )* RPAR
 ;
 
 //6.4
@@ -1472,8 +1526,8 @@ parameter_association
 //6.4
 explicit_actual_parameter
 :
-    expression;
-    //redundant "name" alternative deleted
+    name
+    | expression;
 
 //6.5
 simple_return_statement
@@ -1515,10 +1569,8 @@ null_procedure_declaration
 
 //6.8
 expression_function_declaration 
-@init {this.parenthesizedContext = true;}
-@after {this.parenthesizedContext = false;}
-    :
-     overriding_indicator? function_specification IS LPAR expression RPAR aspect_specification? SEMI_COLON
+:
+     overriding_indicator? function_specification IS parenthesized_expression aspect_specification? SEMI_COLON
      | overriding_indicator? function_specification IS aggregate aspect_specification? SEMI_COLON;
 
 //7.1
@@ -1831,7 +1883,7 @@ accept_statement
 :
     ACCEPT direct_name
     (
-        LPAR entry_index RPAR
+        parenthesized_entry_index
     )? parameter_profile
     (
         DO handled_sequence_of_statements END
@@ -1839,6 +1891,13 @@ accept_statement
             IDENTIFIER?
         
     )? SEMI_COLON
+;
+
+parenthesized_entry_index
+@init {this.parenthesizedContext = true;}
+@after {this.parenthesizedContext = false;}
+:
+    LPAR entry_index RPAR
 ;
 
 //9.5.2
@@ -2304,6 +2363,8 @@ generic_instantiation_clause
 
 //12.3
 generic_actual_part
+@init {this.parenthesizedContext = true;}
+@after {this.parenthesizedContext = false;}
 :
     LPAR generic_association
     (
@@ -2515,6 +2576,8 @@ formal_package_declaration
 
 //12.7
 formal_package_actual_part
+@init {this.parenthesizedContext = true;}
+@after {this.parenthesizedContext = false;}
 :
     LPAR
     (
@@ -2565,13 +2628,13 @@ aspect_specification : WITH aspect_mark (RARROW aspect_definition)?
 aspect_mark : IDENTIFIER CLASS_WIDE?;
 
 //13.1.1
-aspect_definition : expression | IDENTIFIER | synchronization_kind; //redundant "name" alternative deleted + synchronization_kind alternative added (cf. RM �9.5)
+aspect_definition : expression | IDENTIFIER | synchronization_kind | name; //synchronization_kind alternative added (cf. RM �9.5)
 
 //13.3
 attribute_definition_clause
 :
-    FOR local_name APOSTROPHE attribute_designator USE expression SEMI_COLON;
-   //redundant "name" alternative deleted
+    FOR local_name APOSTROPHE attribute_designator USE expression SEMI_COLON
+   | FOR local_name APOSTROPHE attribute_designator USE name SEMI_COLON;
 
 //13.4
 enumeration_representation_clause
@@ -2642,8 +2705,8 @@ restriction
 //13.12
 restriction_parameter_argument
 :
-    //redundant "name" alternative deleted
-    expression;
+    name
+    | expression;
 
 //J.3
 delta_constraint

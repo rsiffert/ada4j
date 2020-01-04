@@ -23,7 +23,6 @@
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
-		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>
 		<nature>net.certiv.antlrdt.core.nature</nature>
 	</natures>
 </projectDescription>

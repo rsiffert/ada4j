@@ -1,4 +1,4 @@
-// Generated from Ada2012.g4 by ANTLR 4.7.2
+// Generated from D:/Users/RS/code/ada4j/org.ada4j/src/org/ada4j/internal/grammar/ada2012\Ada2012.g4 by ANTLR 4.7.2
 package org.ada4j.internal.grammar.ada2012;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -22,6 +22,12 @@ public interface Ada2012Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitPragma(Ada2012Parser.PragmaContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Ada2012Parser#parenthesized_pragma_argument_associations}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParenthesized_pragma_argument_associations(Ada2012Parser.Parenthesized_pragma_argument_associationsContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Ada2012Parser#pragma_argument_association}.
 	 * @param ctx the parse tree
@@ -503,6 +509,12 @@ public interface Ada2012Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitName_component(Ada2012Parser.Name_componentContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Ada2012Parser#qualified_expression_component}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitQualified_expression_component(Ada2012Parser.Qualified_expression_componentContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Ada2012Parser#explicit_dereference_component}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -556,6 +568,12 @@ public interface Ada2012Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitIndexed_component(Ada2012Parser.Indexed_componentContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Ada2012Parser#parenthesized_expressions}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParenthesized_expressions(Ada2012Parser.Parenthesized_expressionsContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Ada2012Parser#slice}.
 	 * @param ctx the parse tree
@@ -731,6 +749,18 @@ public interface Ada2012Visitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPrimary(Ada2012Parser.PrimaryContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link Ada2012Parser#parenthesized_conditional_expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParenthesized_conditional_expression(Ada2012Parser.Parenthesized_conditional_expressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Ada2012Parser#parenthesized_quantified_expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParenthesized_quantified_expression(Ada2012Parser.Parenthesized_quantified_expressionContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link Ada2012Parser#logical_operator}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -826,6 +856,12 @@ public interface Ada2012Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitQualified_expression(Ada2012Parser.Qualified_expressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Ada2012Parser#parenthesized_expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParenthesized_expression(Ada2012Parser.Parenthesized_expressionContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Ada2012Parser#allocator}.
 	 * @param ctx the parse tree
@@ -1306,6 +1342,12 @@ public interface Ada2012Visitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitAccept_statement(Ada2012Parser.Accept_statementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link Ada2012Parser#parenthesized_entry_index}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParenthesized_entry_index(Ada2012Parser.Parenthesized_entry_indexContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link Ada2012Parser#entry_index}.
 	 * @param ctx the parse tree
