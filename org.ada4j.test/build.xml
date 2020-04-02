@@ -3,8 +3,8 @@
     <property environment="env"/>
     <property name="org.ada4j.location" value="../org.ada4j"/>
     <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.8"/>
-    <property name="source" value="1.8"/>
+    <property name="target" value="11"/>
+    <property name="source" value="11"/>
 	<property name="antlr_version" value="4.7.2"/>
     
 	<path id="org.ada4j.classpath">
