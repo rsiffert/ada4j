@@ -1,0 +1,16 @@
+version: v1.0
+name: Java
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+blocks:
+  - name: Ant
+    task:
+      jobs:
+        - name: Build & Test
+          commands:
+            - checkout
+            - sem-version java 11
+            - sudo apt-get install -y ant
+            - ant -noinput -buildfile org.ada4j.test/build.xml test
