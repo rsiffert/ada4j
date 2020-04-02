@@ -5,15 +5,16 @@
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.8"/>
     <property name="source" value="1.8"/>
+	<property name="antlr_version" value="4.7.2"/>
     
 	<path id="org.ada4j.classpath">
         <pathelement location="${org.ada4j.location}/bin"/>
-        <pathelement location="${org.ada4j.location}/lib/antlr-4.5-complete.jar"/>
+        <pathelement location="${org.ada4j.location}/lib/antlr-${antlr_version}-complete.jar"/>
+		<pathelement location="${org.ada4j.location}/lib/guava-14.0.1.jar"/>
     </path>
     
 	<path id="org.ada4j.test.classpath">
         <pathelement location="bin"/>
-        <pathelement location="${org.ada4j.location}/lib/antlr-4.5-complete.jar"/>
         <pathelement location="lib/hamcrest-core-1.3.jar"/>
         <pathelement location="lib/junit-4.12.jar"/>
         <path refid="org.ada4j.classpath"/>
@@ -33,7 +34,7 @@
     </target>
     
 	<target depends="clean" name="cleanall">
-        <ant antfile="build.xml" dir="${org.ada4j.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${org.ada4j.location}" inheritAll="false" target="cleanall"/>
     </target>
     
 	<target depends="build-subprojects,build-project" name="build"/>
@@ -52,8 +53,11 @@
     <target depends="build" name="test">
         <junit fork="yes" printsummary="withOutAndErr" haltonfailure="yes" showoutput="yes" dir="${basedir}">
             <formatter type="xml" usefile="false"/>
-            <test name="org.ada4j.internal.grammar.test.Ada2005GrammarTest"/>
-        	<test name="org.ada4j.api.test.FactoryTest"/>
+        	<batchtest>
+				<fileset dir="src">
+        			<include name="**/*Test.java"/>
+        		</fileset>
+    		</batchtest>
             <classpath refid="org.ada4j.test.classpath"/>
         </junit>
     </target>
